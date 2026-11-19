@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f3ed" />
+    <title>Ivrit – Hebräisch lernen</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">א</div>
+          <div>
+            <h1>Ivrit</h1>
+            <p>Dein Hebräisch-Trainer</p>
+          </div>
+        </div>
+        <div class="streak">✦ &nbsp;<span id="streak">0</span> Lerntage in Folge</div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar" aria-label="Hauptnavigation">
+          <div class="nav-label">LERNEN</div>
+          <button class="nav active" data-view="home"><span>⌂</span>Übersicht</button>
+          <button class="nav" data-view="alphabet"><span>א</span>Alphabet</button>
+          <button class="nav" data-view="practice"><span>✳</span>Üben</button>
+          <button class="nav" data-view="words"><span>▤</span>Wortschatz</button>
+          <div class="side-note">
+            <strong>שלב אחר שלב</strong>
+            Schritt für Schritt. Schon ein paar Minuten am Tag bringen dich weiter.
+          </div>
+        </aside>
+
+        <main>
+          <section class="view active" id="home">
+            <div class="welcome">
+              <div>
+                <div class="eyebrow">שלום · Shalom</div>
+                <h2>Schön, dass du da bist.</h2>
+                <p>Ein kleiner Schritt heute bringt dich deinem Ziel näher.</p>
+              </div>
+              <div class="date-pill" id="today"></div>
+            </div>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Gelernte Buchstaben</div>
+                <div class="stat-value"><span id="learned">0</span><small> / 22</small></div>
+                <div class="stat-foot">von Alef bis Tav</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Richtige Antworten</div>
+                <div class="stat-value" id="correct-count">0</div>
+                <div class="stat-foot">weiter so!</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Gelernte Wörter</div>
+                <div class="stat-value">0</div>
+                <div class="stat-foot">dein Wortschatz wächst</div>
+              </div>
+            </div>
+
+            <div class="continue">
+              <div>
+                <div class="eyebrow">DEINE NÄCHSTE LEKTION</div>
+                <h3>Das hebräische Alphabet</h3>
+                <p>Lerne die ersten Buchstaben und ihre Aussprache kennen.</p>
+                <div class="progress-track"><i id="progress"></i></div>
+              </div>
+              <button data-go="alphabet">Weiterlernen&nbsp; →</button>
+            </div>
+
+            <div class="section-head">
+              <h3>Die ersten Buchstaben</h3>
+              <button data-go="alphabet">Alle Buchstaben ansehen →</button>
+            </div>
+            <div class="letters" id="preview-letters"></div>
+          </section>
+
+          <section class="view" id="alphabet">
+            <div class="alphabet-title">
+              <div>
+                <h2>Das Alphabet</h2>
+                <p>22 Buchstaben, von rechts nach links gelesen.</p>
+              </div>
+              <select class="filter" id="alphabet-filter" aria-label="Buchstaben filtern">
+                <option value="all">Alle Buchstaben</option>
+                <option value="final">Mit Schlussform</option>
+              </select>
+            </div>
+            <div class="letters" id="all-letters"></div>
+          </section>
+
+          <section class="view" id="practice">
+            <div class="alphabet-title">
+              <div>
+                <h2>Üben</h2>
+                <p>Erkenne den Buchstaben und wähle die passende Umschrift.</p>
+              </div>
+            </div>
+            <div class="practice-card">
+              <div class="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
+              <div class="prompt" id="prompt">א</div>
+              <div class="answer-area" id="answers"></div>
+              <div class="feedback" id="feedback" aria-live="polite">Wähle eine Antwort, um zu starten.</div>
+              <button class="next" id="new-question">Neue Frage</button>
+            </div>
+          </section>
+
+          <section class="view" id="words">
+            <div class="alphabet-title">
+              <div>
+                <h2>Wortschatz</h2>
+                <p>Deine ersten hebräischen Wörter.</p>
+              </div>
+            </div>
+            <div class="empty">
+              Der Wortschatzbereich ist vorbereitet. Hier kannst du später eigene Wörter und
+              Themenlektionen ergänzen.
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

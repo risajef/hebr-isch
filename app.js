@@ -78,16 +78,34 @@ const marksQuestions = [
   },
 ];
 
-const defaultState = { seen: [], correct: 0, streak: 0, lastDay: "" };
+const PRACTICE_GOAL = 5;
+const defaultState = {
+  seen: [],
+  correct: 0,
+  streak: 0,
+  lastDay: "",
+  completedLessons: [],
+  practiceCorrect: { alphabet: 0, vowels: 0, marks: 0 },
+};
 const progressKey = "althebraeisch-progress";
 let practiceMode = "choice";
 
 function readProgress() {
   try {
     const saved = localStorage.getItem(progressKey) ?? localStorage.getItem("ivrit-progress");
-    return { ...defaultState, ...JSON.parse(saved) };
+    const stored = JSON.parse(saved) || {};
+    return {
+      ...defaultState,
+      ...stored,
+      completedLessons: Array.isArray(stored.completedLessons) ? stored.completedLessons : [],
+      practiceCorrect: { ...defaultState.practiceCorrect, ...stored.practiceCorrect },
+    };
   } catch {
-    return { ...defaultState };
+    return {
+      ...defaultState,
+      completedLessons: [],
+      practiceCorrect: { ...defaultState.practiceCorrect },
+    };
   }
 }
 
@@ -126,15 +144,90 @@ function drawAlphabet() {
 function renderProgress() {
   document.querySelector("#learned").textContent = state.seen.length;
   document.querySelector("#correct-count").textContent = state.correct;
-  document.querySelector("#progress").style.width = `${(state.seen.length / 22) * 100}%`;
   document.querySelector("#streak").textContent = state.streak;
+  updateLearningPath();
+}
+
+function lessonComplete(stage) {
+  return state.completedLessons.includes(stage);
+}
+
+function practiceComplete(stage) {
+  return state.practiceCorrect[stage] >= PRACTICE_GOAL;
+}
+
+function updateLearningPath() {
+  const stages = [
+    { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben und übe ihre Namen und Laute.", action: "Zum Alphabet" },
+    { key: "vowels", lesson: "vowels", practice: "vowels", lessonView: "vowels", practiceView: "vowel-practice", title: "Vokale", description: "Lerne die Nikud-Zeichen und übe ihre Laute.", action: "Zu den Vokalen" },
+    { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Verstehe die Punktzeichen und übe ihre Wirkung.", action: "Zu Dagesch & Mappiq" },
+  ];
+  const steps = stages.flatMap((stage) => [
+    { view: stage.lessonView, title: `Lerne ${stage.title}`, description: stage.description, complete: lessonComplete(stage.lesson), action: stage.key === "letters" ? "Alphabet ansehen" : stage.key === "vowels" ? "Vokale ansehen" : "Dagesch & Mappiq ansehen" },
+    { view: stage.practiceView, title: `Übe ${stage.title}`, description: `${state.practiceCorrect[stage.practice]} von ${PRACTICE_GOAL} richtigen Antworten bis zum Etappenziel.`, complete: practiceComplete(stage.practice), action: stage.key === "letters" ? "Alphabet üben" : stage.key === "vowels" ? "Vokale üben" : "Dagesch & Mappiq üben" },
+  ]);
+  const nextStep = steps.find((step) => !step.complete);
+  const completeCount = steps.filter((step) => step.complete).length;
+  document.querySelector("#learning-steps").textContent = completeCount;
+  document.querySelector("#progress").style.width = `${(completeCount / steps.length) * 100}%`;
+
+  const continueButton = document.querySelector("#continue-learning");
+  const continueTitle = document.querySelector("#continue-title");
+  const continueDescription = document.querySelector("#continue-description");
+  const continueKicker = document.querySelector("#continue-kicker");
+  if (nextStep) {
+    continueButton.dataset.go = nextStep.view;
+    continueButton.textContent = `${nextStep.action} →`;
+    continueTitle.textContent = nextStep.title;
+    continueDescription.textContent = nextStep.description;
+    continueKicker.textContent = `DEIN NÄCHSTER SCHRITT · ${completeCount + 1} VON ${steps.length}`;
+  } else {
+    continueButton.dataset.go = "home";
+    continueButton.textContent = "Lernpfad ansehen →";
+    continueTitle.textContent = "Du hast den Lernpfad geschafft!";
+    continueDescription.textContent = "Wiederhole eine Etappe oder lies Genesis 1,1 mit den Vokalzeichen.";
+    continueKicker.textContent = "ALLE ETAPPEN ABGESCHLOSSEN";
+  }
+
+  stages.forEach((stage, index) => {
+    const lessonsDone = lessonComplete(stage.lesson);
+    const practiceCount = Math.min(state.practiceCorrect[stage.practice], PRACTICE_GOAL);
+    const done = lessonsDone && practiceCount >= PRACTICE_GOAL;
+    const progress = (Number(lessonsDone) * 0.5 + (practiceCount / PRACTICE_GOAL) * 0.5) * 100;
+    document.querySelector(`#${stage.key}-progress`).style.width = `${progress}%`;
+    document.querySelector(`#${stage.key}-status`).textContent = done
+      ? "Abgeschlossen"
+      : nextStep?.view.startsWith(stage.key === "letters" ? "alphabet" : stage.key === "vowels" ? "vowel" : "marks")
+        ? "Jetzt dran"
+        : index === 0 ? "Start" : "Danach";
+    document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("complete", done);
+    document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("active", !done && nextStep?.view.startsWith(stage.key === "letters" ? "alphabet" : stage.key === "vowels" ? "vowel" : "marks"));
+  });
+
+  document.querySelector("#alphabet-practice-count").textContent = `${state.practiceCorrect.alphabet} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#vowel-practice-count").textContent = `${state.practiceCorrect.vowels} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#marks-practice-count").textContent = `${state.practiceCorrect.marks} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#alphabet-completion").hidden = !practiceComplete("alphabet");
+  document.querySelector("#vowel-completion").hidden = !practiceComplete("vowels");
+  document.querySelector("#marks-completion").hidden = !practiceComplete("marks");
+}
+
+function completeLesson(stage) {
+  if (!lessonComplete(stage)) state.completedLessons.push(stage);
+  saveProgress();
+  renderProgress();
+}
+
+function recordCorrectPractice(stage, letter = null) {
+  state.correct += 1;
+  state.practiceCorrect[stage] = Math.min(PRACTICE_GOAL, state.practiceCorrect[stage] + 1);
+  if (letter) state.seen = [...new Set([...state.seen, letter.he])];
+  updateStreak();
+  saveProgress();
+  renderProgress();
 }
 
 function render() {
-  document.querySelector("#preview-letters").innerHTML = letters
-    .slice(0, 7)
-    .map(createLetterCard)
-    .join("");
   drawAlphabet();
   drawVowelLessons();
   renderProgress();
@@ -148,9 +241,9 @@ function showView(viewId) {
     button.classList.toggle("active", button.dataset.view === viewId);
   });
 
-  if (viewId === "practice") createQuestion();
-  if (viewId === "vowels") createVowelQuestion();
-  if (viewId === "marks") createMarksQuestion();
+  if (viewId === "alphabet-practice") createQuestion();
+  if (viewId === "vowel-practice") createVowelQuestion();
+  if (viewId === "marks-practice") createMarksQuestion();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -202,13 +295,6 @@ function createMarksQuestion() {
   document.querySelector("#marks-answers").innerHTML = options.map(([label, correct]) =>
     `<button class="answer" data-correct="${correct}">${label}</button>`,
   ).join("");
-}
-
-function recordNonAlphabetCorrect() {
-  state.correct += 1;
-  updateStreak();
-  saveProgress();
-  renderProgress();
 }
 
 function createQuestion() {
@@ -275,16 +361,24 @@ document.querySelectorAll(".nav").forEach((button) => {
 });
 
 document.querySelectorAll("[data-go]").forEach((button) => {
-  button.addEventListener("click", () => showView(button.dataset.go));
+  button.addEventListener("click", () => {
+    if (button.dataset.completeLesson) completeLesson(button.dataset.completeLesson);
+    showView(button.dataset.go);
+    if (button.dataset.scrollTo) {
+      window.setTimeout(() => {
+        document.getElementById(button.dataset.scrollTo)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 250);
+    }
+  });
 });
 
 document.querySelector("#alphabet-filter").addEventListener("change", drawAlphabet);
 document.querySelector("#new-question").addEventListener("click", createQuestion);
 
-document.querySelectorAll(".mode").forEach((button) => {
+document.querySelectorAll("[data-mode]").forEach((button) => {
   button.addEventListener("click", () => {
     practiceMode = button.dataset.mode;
-    document.querySelectorAll(".mode").forEach((modeButton) => {
+    document.querySelectorAll("[data-mode]").forEach((modeButton) => {
       const active = modeButton === button;
       modeButton.classList.toggle("active", active);
       modeButton.setAttribute("aria-pressed", String(active));
@@ -321,13 +415,7 @@ document.querySelector("#answers").addEventListener("click", (event) => {
     ? "Richtig! כל הכבוד · Kol hakavod!"
     : `Noch nicht ganz. ${currentQuestion.name} klingt wie „${currentQuestion.sound}“.`;
 
-  if (isCorrect) {
-    state.correct += 1;
-    markLetterAsSeen(currentQuestion);
-    updateStreak();
-    saveProgress();
-    renderProgress();
-  }
+  if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 });
 
 function normalizeAnswer(value) {
@@ -359,13 +447,7 @@ function submitTypedAnswer(event) {
     ? "Richtig! כל הכבוד · Kol hakavod!"
     : `Noch nicht ganz. ${practiceMode === "sound" ? `Der ungefähre Laut ist „${expected}“` : `Der Buchstabe heißt ${expected}`}.`;
 
-  if (isCorrect) {
-    state.correct += 1;
-    markLetterAsSeen(currentQuestion);
-    updateStreak();
-    saveProgress();
-    renderProgress();
-  }
+  if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 }
 
 document.querySelector("#text-answer").addEventListener("submit", submitTypedAnswer);
@@ -405,7 +487,7 @@ function finishVowelQuestion(isCorrect, selectedButton = null) {
   document.querySelector("#vowel-feedback").textContent = isCorrect
     ? `Richtig! ${explanation}`
     : `Noch nicht ganz. ${currentVowel.name}: ${explanation}`;
-  if (isCorrect) recordNonAlphabetCorrect();
+  if (isCorrect) recordCorrectPractice("vowels");
 }
 
 document.querySelector("#vowel-text-answer").addEventListener("submit", (event) => {
@@ -431,7 +513,7 @@ document.querySelector("#marks-answers").addEventListener("click", (event) => {
   document.querySelector("#marks-feedback").textContent = isCorrect
     ? "Richtig!"
     : `Noch nicht ganz. ${currentMarksQuestion.answers.find(([, correct]) => correct)[0]}`;
-  if (isCorrect) recordNonAlphabetCorrect();
+  if (isCorrect) recordCorrectPractice("marks");
 });
 
 document.querySelector("#today").textContent = new Intl.DateTimeFormat("de-CH", {

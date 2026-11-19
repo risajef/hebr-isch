@@ -31,7 +31,8 @@ button { font: inherit; cursor: pointer; }
 
 .layout { display: grid; grid-template-columns: 220px 1fr; gap: 40px; padding-top: 34px; }
 .sidebar { display: flex; flex-direction: column; gap: 6px; }
-.nav-label { margin: 5px 12px 9px; color: #98a09a; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; }
+.nav-group { display: flex; flex-direction: column; gap: 6px; }
+.nav-label { margin: 14px 12px 5px; color: #98a09a; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
 .nav { display: flex; align-items: center; gap: 12px; padding: 12px; border: 0; border-radius: 12px; background: transparent; color: #61716d; text-align: left; font-size: 14px; }
 .nav span { width: 22px; text-align: center; font-size: 18px; }
 .nav:hover, .nav.active { background: var(--mint); color: #145c4d; font-weight: 650; }
@@ -95,6 +96,26 @@ main { min-width: 0; }
 .feedback { min-height: 25px; margin-top: 15px; color: var(--muted); font-size: 13px; }
 .next { padding: 12px 22px; border: 0; border-radius: 11px; background: var(--green); color: white; font-weight: 650; }
 .empty { padding: 35px; border: 1px solid var(--line); border-radius: 18px; background: var(--white); color: var(--muted); text-align: center; }
+.path-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.path-card { position: relative; min-width: 0; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); transition: 0.2s; }
+.path-card.active { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green), var(--shadow); }
+.path-card.complete { background: var(--mint); }
+.path-number { float: right; color: #a3aaa5; font: 24px Georgia, serif; }
+.path-status { color: var(--green); font-size: 10px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; }
+.path-card h3 { margin: 11px 0 5px; font-size: 17px; }
+.path-card p { min-height: 38px; margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.path-progress { height: 4px; margin: 16px 0 12px; overflow: hidden; background: var(--line); }
+.path-progress i { display: block; width: 0; height: 100%; background: var(--green); transition: width 0.3s ease; }
+.path-link { padding: 0; border: 0; background: transparent; color: var(--green); font-size: 12px; font-weight: 700; text-align: left; }
+.path-link:hover { text-decoration: underline; }
+.step-kicker { display: flex; justify-content: space-between; margin: 0 0 18px; color: var(--green); font-size: 10px; font-weight: 750; letter-spacing: 0.12em; }
+.step-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); }
+.step-footer p { max-width: 540px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.practice-count { margin-bottom: 16px; color: var(--green); font-size: 11px; font-weight: 700; }
+.practice-completion { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); text-align: left; }
+.practice-completion[hidden] { display: none; }
+.practice-completion strong { color: var(--green); font-size: 15px; }
+.practice-completion p { margin: 6px 0 13px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .lesson-note { margin: 16px 0 18px; padding: 17px 19px; border-left: 4px solid var(--green); background: var(--mint); color: var(--ink); font-size: 13px; line-height: 1.65; }
 .lesson-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .lesson-card { min-width: 0; padding: 17px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
@@ -119,6 +140,9 @@ main { min-width: 0; }
   .welcome h2 { font-size: 30px; }
   .letters { grid-template-columns: repeat(5, 1fr); }
   .lesson-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .path-grid { grid-template-columns: 1fr; }
+  .path-card { padding: 15px; }
+  .path-card p { min-height: 0; }
 }
 
 @media (max-width: 460px) {
@@ -133,4 +157,6 @@ main { min-width: 0; }
   .lesson-grid { grid-template-columns: 1fr; }
   .genesis { padding: 18px; }
   .genesis .genesis-hebrew { font-size: 25px; }
+  .step-footer { align-items: stretch; flex-direction: column; }
+  .step-footer .next { width: 100%; }
 }

@@ -23,13 +23,22 @@
 
       <div class="layout">
         <aside class="sidebar" aria-label="Hauptnavigation">
-          <div class="nav-label">LERNEN</div>
           <button class="nav active" data-view="home"><span>⌂</span>Übersicht</button>
-          <button class="nav" data-view="alphabet"><span>א</span>Alphabet</button>
-          <button class="nav" data-view="practice"><span>✳</span>Alphabet üben</button>
-          <button class="nav" data-view="vowels"><span>ְ</span>Vokalzeichen</button>
-          <button class="nav" data-view="marks"><span>ּ</span>Dagesch &amp; Mappiq</button>
-          <button class="nav" data-view="words"><span>▤</span>Wortschatz</button>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 1 · BUCHSTABEN</div>
+            <button class="nav" data-view="alphabet"><span>א</span>Alphabet</button>
+            <button class="nav" data-view="alphabet-practice"><span>✳</span>Alphabet üben</button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 2 · VOKALE</div>
+            <button class="nav" data-view="vowels"><span>ְ</span>Vokale</button>
+            <button class="nav" data-view="vowel-practice"><span>✳</span>Vokale üben</button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 3 · PUNKTE</div>
+            <button class="nav" data-view="marks"><span>ּ</span>Dagesch &amp; Mappiq</button>
+            <button class="nav" data-view="marks-practice"><span>✳</span>Dagesch &amp; Mappiq üben</button>
+          </div>
           <div class="side-note">
             <strong>שלב אחר שלב</strong>
             Schritt für Schritt. Schon ein paar Minuten am Tag bringen dich weiter.
@@ -42,7 +51,7 @@
               <div>
                 <div class="eyebrow">שלום · Shalom</div>
                 <h2>Althebräisch Schritt für Schritt.</h2>
-                <p>Lerne die Buchstaben des biblischen Hebräisch kennen und übe sie aktiv.</p>
+                <p>Erst die Buchstaben. Dann die Vokale. Zum Schluss die Punkte, die Laute verändern.</p>
               </div>
               <div class="date-pill" id="today"></div>
             </div>
@@ -59,30 +68,53 @@
                 <div class="stat-foot">weiter so!</div>
               </div>
               <div class="stat">
-                <div class="stat-label">Gelernte Wörter</div>
-                <div class="stat-value">0</div>
-                <div class="stat-foot">dein Wortschatz wächst</div>
+                <div class="stat-label">Lernschritte</div>
+                <div class="stat-value"><span id="learning-steps">0</span><small> / 6</small></div>
+                <div class="stat-foot">Lektion und Übung</div>
               </div>
             </div>
 
-            <div class="continue">
+            <div class="continue" id="continue-card">
               <div>
-                <div class="eyebrow">DEINE NÄCHSTE LEKTION</div>
-                <h3>Das hebräische Alphabet</h3>
-                <p>Lerne die Buchstaben und ihre Namen und übe ihre überlieferten Laute.</p>
+                <div class="eyebrow" id="continue-kicker">DEIN LERNPFAD</div>
+                <h3 id="continue-title">Starte mit dem Alphabet</h3>
+                <p id="continue-description">Lerne die 22 Buchstaben und übe ihre Namen und Laute.</p>
                 <div class="progress-track"><i id="progress"></i></div>
               </div>
-              <button data-go="practice">Alphabet üben&nbsp; →</button>
+              <button id="continue-learning" data-go="alphabet">Los geht’s&nbsp; →</button>
             </div>
 
-            <div class="section-head">
-              <h3>Die ersten Buchstaben</h3>
-              <button data-go="alphabet">Alle Buchstaben ansehen →</button>
+            <div class="section-head"><h3>Dein Lernpfad</h3></div>
+            <div class="path-grid">
+              <article class="path-card" data-path="letters">
+                <div class="path-number">01</div>
+                <div class="path-status" id="letters-status">Als Nächstes</div>
+                <h3>Alphabet</h3>
+                <p>22 Zeichen, ihre Namen und Laute.</p>
+                <div class="path-progress"><i id="letters-progress"></i></div>
+                <button class="path-link" data-go="alphabet">Etappe öffnen →</button>
+              </article>
+              <article class="path-card" data-path="vowels">
+                <div class="path-number">02</div>
+                <div class="path-status" id="vowels-status">Danach</div>
+                <h3>Vokale</h3>
+                <p>Nikud-Zeichen sehen, hören und lesen.</p>
+                <div class="path-progress"><i id="vowels-progress"></i></div>
+                <button class="path-link" data-go="vowels">Etappe öffnen →</button>
+              </article>
+              <article class="path-card" data-path="marks">
+                <div class="path-number">03</div>
+                <div class="path-status" id="marks-status">Zum Schluss</div>
+                <h3>Dagesch &amp; Mappiq</h3>
+                <p>Punkte erkennen und ihre Wirkung üben.</p>
+                <div class="path-progress"><i id="marks-progress"></i></div>
+                <button class="path-link" data-go="marks">Etappe öffnen →</button>
+              </article>
             </div>
-            <div class="letters" id="preview-letters"></div>
           </section>
 
           <section class="view" id="alphabet">
+            <div class="step-kicker"><span>ETAPPE 1 VON 3</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Das Alphabet</h2>
@@ -94,9 +126,14 @@
               </select>
             </div>
             <div class="letters" id="all-letters"></div>
+            <div class="step-footer">
+              <p>Wenn du die Zeichen einmal durchgesehen hast, probiere Namen und Laute selbst aus.</p>
+              <button class="next" data-complete-lesson="alphabet" data-go="alphabet-practice">Weiter: Alphabet üben →</button>
+            </div>
           </section>
 
-          <section class="view" id="practice">
+          <section class="view" id="alphabet-practice">
+            <div class="step-kicker"><span>ETAPPE 1 VON 3</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Alphabet üben</h2>
@@ -109,6 +146,7 @@
               <button class="mode" data-mode="name" aria-pressed="false">Buchstabenname</button>
             </div>
             <div class="practice-card">
+              <div class="practice-count" id="alphabet-practice-count">0 / 5 richtige Antworten</div>
               <div class="practice-kind" id="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
               <div class="prompt" id="prompt">א</div>
               <div class="answer-area" id="answers"></div>
@@ -119,13 +157,19 @@
               </form>
               <div class="feedback" id="feedback" aria-live="polite">Wähle eine Antwort, um zu starten.</div>
               <button class="next" id="new-question">Neue Frage</button>
+              <div class="practice-completion" id="alphabet-completion" hidden>
+                <strong>Etappe geschafft!</strong>
+                <p>Du hast fünf Antworten richtig. Weiter geht’s mit den Vokalen.</p>
+                <button class="next" data-go="vowels">Weiter zu den Vokalen →</button>
+              </div>
             </div>
           </section>
 
           <section class="view" id="vowels">
+            <div class="step-kicker"><span>ETAPPE 2 VON 3</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
-                <h2>Vokalzeichen · Nikud</h2>
+                <h2>Vokale · Nikud</h2>
                 <p>Die Zeichen ergänzen die Vokale, die im hebräischen Schriftbild meist nicht mit Buchstaben geschrieben werden.</p>
               </div>
             </div>
@@ -136,12 +180,26 @@
             <div class="lesson-note">
               Die Lautangaben sind eine vereinfachte Lesehilfe nach der heute üblichen israelischen Aussprache. In historischen und traditionellen Lesarten gibt es weitere Unterschiede: Ein Kamatz klingt nicht immer wie „a“, und die Vokallänge lässt sich nicht allein am Zeichen ablesen.
             </div>
-            <div class="section-head"><h3>Vokale üben</h3></div>
+            <div class="step-footer">
+              <p>Erst wenn die Zeichen vertraut sind, wird aus dem Punkt ein lesbarer Laut.</p>
+              <button class="next" data-complete-lesson="vowels" data-go="vowel-practice">Weiter: Vokale üben →</button>
+            </div>
+          </section>
+
+          <section class="view" id="vowel-practice">
+            <div class="step-kicker"><span>ETAPPE 2 VON 3</span><span>2 · ÜBEN</span></div>
+            <div class="alphabet-title">
+              <div>
+                <h2>Vokale üben</h2>
+                <p>Erkenne den Grundlaut des Zeichens. Beim Schwa kann die Aussprache von der Position abhängen.</p>
+              </div>
+            </div>
             <div class="practice-modes" role="group" aria-label="Vokalübung">
               <button class="mode active" data-vowel-mode="choice" aria-pressed="true">Auswahl</button>
               <button class="mode" data-vowel-mode="typed" aria-pressed="false">Laut eintippen</button>
             </div>
             <div class="practice-card">
+              <div class="practice-count" id="vowel-practice-count">0 / 5 richtige Antworten</div>
               <div class="practice-kind" id="vowel-kind">Welchen Laut zeigt dieses Zeichen?</div>
               <div class="prompt" id="vowel-prompt" dir="rtl"></div>
               <div class="answer-area" id="vowel-answers"></div>
@@ -152,8 +210,13 @@
               </form>
               <div class="feedback" id="vowel-feedback" aria-live="polite">Wähle den Laut aus oder tippe ihn ein.</div>
               <button class="next" id="next-vowel-question">Neues Zeichen</button>
+              <div class="practice-completion" id="vowel-completion" hidden>
+                <strong>Etappe geschafft!</strong>
+                <p>Du erkennst die Vokalzeichen. Als Nächstes kommen Dagesch und Mappiq.</p>
+                <button class="next" data-go="marks">Weiter zu Dagesch &amp; Mappiq →</button>
+              </div>
             </div>
-            <section class="genesis">
+            <section class="genesis" id="genesis">
               <div class="eyebrow">ZUM ABSCHLUSS</div>
               <h3>Genesis 1,1</h3>
               <p class="genesis-hebrew" lang="he" dir="rtl">בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃</p>
@@ -163,6 +226,7 @@
           </section>
 
           <section class="view" id="marks">
+            <div class="step-kicker"><span>ETAPPE 3 VON 3</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq</h2>
@@ -189,26 +253,32 @@
                 <p>In anderen Fällen markiert der Punkt einen verstärkten oder verdoppelten Konsonanten. Beim Lesen wird der Buchstabe entsprechend betont; die genaue Umsetzung hängt von der Aussprachetradition ab.</p>
               </article>
             </div>
-            <div class="section-head"><h3>Dagesch und Mappiq üben</h3></div>
+            <div class="step-footer">
+              <p>Jetzt kennst du die drei Aufgaben des Punktes. In der Übung entscheidest du, was er jeweils anzeigt.</p>
+              <button class="next" data-complete-lesson="marks" data-go="marks-practice">Weiter: Dagesch &amp; Mappiq üben →</button>
+            </div>
+          </section>
+
+          <section class="view" id="marks-practice">
+            <div class="step-kicker"><span>ETAPPE 3 VON 3</span><span>2 · ÜBEN</span></div>
+            <div class="alphabet-title">
+              <div>
+                <h2>Dagesch &amp; Mappiq üben</h2>
+                <p>Ist es Dagesch qal, Dagesch forte oder Mappiq?</p>
+              </div>
+            </div>
             <div class="practice-card">
+              <div class="practice-count" id="marks-practice-count">0 / 5 richtige Antworten</div>
               <div class="practice-kind" id="marks-kind">Was zeigt der Punkt in diesem Beispiel?</div>
               <div class="prompt" id="marks-prompt" dir="rtl"></div>
               <div class="answer-area" id="marks-answers"></div>
               <div class="feedback" id="marks-feedback" aria-live="polite">Wähle die passende Erklärung.</div>
               <button class="next" id="next-marks-question">Neue Frage</button>
-            </div>
-          </section>
-
-          <section class="view" id="words">
-            <div class="alphabet-title">
-              <div>
-                <h2>Wortschatz</h2>
-                <p>Deine ersten hebräischen Wörter.</p>
+              <div class="practice-completion" id="marks-completion" hidden>
+                <strong>Du hast den Lernpfad abgeschlossen!</strong>
+                <p>Du kannst die Etappen jederzeit wiederholen oder Genesis 1,1 lesen.</p>
+                <button class="next" data-go="vowel-practice" data-scroll-to="genesis">Genesis 1,1 lesen →</button>
               </div>
-            </div>
-            <div class="empty">
-              Der Wortschatzbereich ist vorbereitet. Hier kannst du später eigene Wörter und
-              Themenlektionen ergänzen.
             </div>
           </section>
         </main>

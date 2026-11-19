@@ -1,5 +1,5 @@
 const letters = [
-  { he: "א", name: "Alef", sound: "stumm" },
+  { he: "א", name: "Alef", sound: "ʾ" },
   { he: "ב", name: "Bet", sound: "b" },
   { he: "ג", name: "Gimel", sound: "g" },
   { he: "ד", name: "Dalet", sound: "d" },
@@ -14,7 +14,7 @@ const letters = [
   { he: "מ", final: "ם", name: "Mem", sound: "m" },
   { he: "נ", final: "ן", name: "Nun", sound: "n" },
   { he: "ס", name: "Samech", sound: "s" },
-  { he: "ע", name: "Ajin", sound: "stumm" },
+  { he: "ע", name: "Ajin", sound: "ʿ" },
   { he: "פ", final: "ף", name: "Pe", sound: "p" },
   { he: "צ", final: "ץ", name: "Tsadi", sound: "ts" },
   { he: "ק", name: "Kof", sound: "k" },
@@ -24,10 +24,13 @@ const letters = [
 ];
 
 const defaultState = { seen: [], correct: 0, streak: 0, lastDay: "" };
+const progressKey = "althebraeisch-progress";
+let practiceMode = "choice";
 
 function readProgress() {
   try {
-    return { ...defaultState, ...JSON.parse(localStorage.getItem("ivrit-progress")) };
+    const saved = localStorage.getItem(progressKey) ?? localStorage.getItem("ivrit-progress");
+    return { ...defaultState, ...JSON.parse(saved) };
   } catch {
     return { ...defaultState };
   }
@@ -38,7 +41,7 @@ let currentQuestion = null;
 let questionAnswered = false;
 
 function saveProgress() {
-  localStorage.setItem("ivrit-progress", JSON.stringify(state));
+  localStorage.setItem(progressKey, JSON.stringify(state));
 }
 
 function createLetterCard(letter) {
@@ -92,8 +95,34 @@ function createQuestion() {
   currentQuestion = letters[Math.floor(Math.random() * letters.length)];
   questionAnswered = false;
   document.querySelector("#prompt").textContent = currentQuestion.he;
-  document.querySelector("#feedback").textContent = "Wähle die passende Umschrift.";
+  const feedback = document.querySelector("#feedback");
+  const answers = document.querySelector("#answers");
+  const textAnswer = document.querySelector("#text-answer");
+  const input = document.querySelector("#answer-input");
+  const kind = document.querySelector("#practice-kind");
+  feedback.textContent = practiceMode === "choice"
+    ? "Wähle die passende Lautangabe."
+    : "Gib deine Antwort ein und bestätige mit Enter oder Prüfen.";
+  input.value = "";
+  answers.hidden = practiceMode !== "choice";
+  textAnswer.hidden = practiceMode === "choice";
 
+  if (practiceMode === "sound") {
+    kind.textContent = "Wie wird dieser Buchstabe ungefähr gesprochen?";
+    input.placeholder = "Laut eingeben …";
+    input.setAttribute("aria-label", "Laut eingeben");
+  } else if (practiceMode === "name") {
+    kind.textContent = "Wie heißt dieser Buchstabe?";
+    input.placeholder = "Buchstabennamen eingeben …";
+    input.setAttribute("aria-label", "Buchstabennamen eingeben");
+  } else {
+    kind.textContent = "Welcher Laut gehört zu diesem Buchstaben?";
+  }
+
+  if (practiceMode !== "choice") {
+    input.focus();
+    return;
+  }
   const options = new Map([[currentQuestion.sound, currentQuestion]]);
   while (options.size < 4) {
     const candidate = letters[Math.floor(Math.random() * letters.length)];
@@ -132,6 +161,18 @@ document.querySelectorAll("[data-go]").forEach((button) => {
 document.querySelector("#alphabet-filter").addEventListener("change", drawAlphabet);
 document.querySelector("#new-question").addEventListener("click", createQuestion);
 
+document.querySelectorAll(".mode").forEach((button) => {
+  button.addEventListener("click", () => {
+    practiceMode = button.dataset.mode;
+    document.querySelectorAll(".mode").forEach((modeButton) => {
+      const active = modeButton === button;
+      modeButton.classList.toggle("active", active);
+      modeButton.setAttribute("aria-pressed", String(active));
+    });
+    createQuestion();
+  });
+});
+
 document.addEventListener("click", (event) => {
   const card = event.target.closest(".letter");
   if (!card) return;
@@ -168,6 +209,43 @@ document.querySelector("#answers").addEventListener("click", (event) => {
     renderProgress();
   }
 });
+
+function normalizeAnswer(value) {
+  return value
+    .trim()
+    .toLocaleLowerCase("de")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’‘']/g, "ʾ")
+    .replace(/\s+/g, " ");
+}
+
+function submitTypedAnswer(event) {
+  event.preventDefault();
+  if (questionAnswered || !currentQuestion) return;
+
+  const expected = practiceMode === "sound" ? currentQuestion.sound : currentQuestion.name;
+  const value = normalizeAnswer(document.querySelector("#answer-input").value);
+  const accepted = [expected];
+  if (expected === "ʾ") accepted.push("ʔ", "alef", "aleph", "glottal");
+  if (expected === "ʿ") accepted.push("ajin", "ayin", "pharyngeal");
+
+  const isCorrect = accepted.some((answer) => normalizeAnswer(answer) === value);
+  questionAnswered = true;
+  document.querySelector("#feedback").textContent = isCorrect
+    ? "Richtig! כל הכבוד · Kol hakavod!"
+    : `Noch nicht ganz. ${practiceMode === "sound" ? `Der ungefähre Laut ist „${expected}“` : `Der Buchstabe heißt ${expected}`}.`;
+
+  if (isCorrect) {
+    state.correct += 1;
+    markLetterAsSeen(currentQuestion);
+    updateStreak();
+    saveProgress();
+    renderProgress();
+  }
+}
+
+document.querySelector("#text-answer").addEventListener("submit", submitTypedAnswer);
 
 document.querySelector("#today").textContent = new Intl.DateTimeFormat("de-CH", {
   weekday: "long",

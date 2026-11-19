@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f6f3ed" />
-    <title>Ivrit – Hebräisch lernen</title>
+    <meta name="theme-color" content="#ffffff" />
+    <title>Althebräisch lernen</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="app.js" defer></script>
   </head>
@@ -14,8 +14,8 @@
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">א</div>
           <div>
-            <h1>Ivrit</h1>
-            <p>Dein Hebräisch-Trainer</p>
+            <h1>Althebräisch</h1>
+            <p>Dein Trainer für das biblische Hebräisch</p>
           </div>
         </div>
         <div class="streak">✦ &nbsp;<span id="streak">0</span> Lerntage in Folge</div>
@@ -26,7 +26,7 @@
           <div class="nav-label">LERNEN</div>
           <button class="nav active" data-view="home"><span>⌂</span>Übersicht</button>
           <button class="nav" data-view="alphabet"><span>א</span>Alphabet</button>
-          <button class="nav" data-view="practice"><span>✳</span>Üben</button>
+          <button class="nav" data-view="practice"><span>✳</span>Alphabet üben</button>
           <button class="nav" data-view="words"><span>▤</span>Wortschatz</button>
           <div class="side-note">
             <strong>שלב אחר שלב</strong>
@@ -39,8 +39,8 @@
             <div class="welcome">
               <div>
                 <div class="eyebrow">שלום · Shalom</div>
-                <h2>Schön, dass du da bist.</h2>
-                <p>Ein kleiner Schritt heute bringt dich deinem Ziel näher.</p>
+                <h2>Althebräisch Schritt für Schritt.</h2>
+                <p>Lerne die Buchstaben des biblischen Hebräisch kennen und übe sie aktiv.</p>
               </div>
               <div class="date-pill" id="today"></div>
             </div>
@@ -67,10 +67,10 @@
               <div>
                 <div class="eyebrow">DEINE NÄCHSTE LEKTION</div>
                 <h3>Das hebräische Alphabet</h3>
-                <p>Lerne die ersten Buchstaben und ihre Aussprache kennen.</p>
+                <p>Lerne die Buchstaben und ihre Namen und übe ihre überlieferten Laute.</p>
                 <div class="progress-track"><i id="progress"></i></div>
               </div>
-              <button data-go="alphabet">Weiterlernen&nbsp; →</button>
+              <button data-go="practice">Alphabet üben&nbsp; →</button>
             </div>
 
             <div class="section-head">
@@ -97,14 +97,24 @@
           <section class="view" id="practice">
             <div class="alphabet-title">
               <div>
-                <h2>Üben</h2>
-                <p>Erkenne den Buchstaben und wähle die passende Umschrift.</p>
+                <h2>Alphabet üben</h2>
+                <p>Wähle eine Übungsart: Erkennen, den Laut eingeben oder den Namen schreiben.</p>
               </div>
             </div>
+            <div class="practice-modes" role="group" aria-label="Übungsart">
+              <button class="mode active" data-mode="choice" aria-pressed="true">Auswahl · leicht</button>
+              <button class="mode" data-mode="sound" aria-pressed="false">Laut · schwierig</button>
+              <button class="mode" data-mode="name" aria-pressed="false">Buchstabenname</button>
+            </div>
             <div class="practice-card">
-              <div class="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
+              <div class="practice-kind" id="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
               <div class="prompt" id="prompt">א</div>
               <div class="answer-area" id="answers"></div>
+              <form class="text-answer" id="text-answer" hidden>
+                <label class="sr-only" id="answer-label" for="answer-input">Antwort</label>
+                <input id="answer-input" autocomplete="off" autocapitalize="none" spellcheck="false" />
+                <button class="next" type="submit">Prüfen</button>
+              </form>
               <div class="feedback" id="feedback" aria-live="polite">Wähle eine Antwort, um zu starten.</div>
               <button class="next" id="new-question">Neue Frage</button>
             </div>

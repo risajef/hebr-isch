@@ -23,6 +23,61 @@ const letters = [
   { he: "ת", name: "Taw", sound: "t" },
 ];
 
+const vowels = [
+  { he: "בָּ", name: "Kamatz", sound: "a", soundText: "a", example: "wie in Vater" },
+  { he: "בַּ", name: "Patach", sound: "a", soundText: "a", example: "wie in Mann" },
+  { he: "בֵּ", name: "Zere", sound: "e", soundText: "e", example: "wie in See" },
+  { he: "בֶּ", name: "Segol", sound: "e", soundText: "e", example: "wie in Bett" },
+  { he: "בִּ", name: "Chirik", sound: "i", soundText: "i", example: "wie in Igel" },
+  { he: "בֹּ", name: "Cholam", sound: "o", soundText: "o", example: "wie in Ofen" },
+  { he: "בּוֹ", name: "Cholam male", sound: "o", soundText: "o", example: "wie in Ofen" },
+  { he: "בֻּ", name: "Kubbuz", sound: "u", soundText: "u", example: "kurz, wie in Mutter" },
+  { he: "בּוּ", name: "Schuruk", sound: "u", soundText: "u", example: "wie in Kuh" },
+  { he: "בְּ", name: "Schwa", sound: "ə", soundText: "ə / kein Vokal", example: "kurzes unbetontes e oder stumm – je nach Position" },
+  { he: "בֳּ", name: "Chataf-Kamatz", sound: "o", soundText: "kurzes o", example: "ein reduziertes, kurzes o" },
+  { he: "בֲּ", name: "Chataf-Patach", sound: "a", soundText: "kurzes a", example: "ein reduziertes, kurzes a" },
+  { he: "בֱּ", name: "Chataf-Segol", sound: "e", soundText: "kurzes e", example: "ein reduziertes, kurzes e" },
+];
+
+const marksQuestions = [
+  {
+    prompt: "בּ",
+    question: "Was zeigt der Punkt in diesem Bet?",
+    answers: [
+      ["Der Laut ist b, wie in Ball.", true],
+      ["Der Laut ist v, wie in Vase.", false],
+      ["Der Punkt zeigt einen Vokal an.", false],
+    ],
+  },
+  {
+    prompt: "ב",
+    question: "Wie klingt Bet ohne Dagesch in der üblichen israelischen Aussprache?",
+    answers: [
+      ["Wie v in Vase.", true],
+      ["Wie b in Ball.", false],
+      ["Es wird nicht gesprochen.", false],
+    ],
+  },
+  {
+    prompt: "לָהּ",
+    question: "Was zeigt der Punkt im abschließenden He?",
+    answers: [
+      ["Mappiq: Das He wird als h gesprochen.", true],
+      ["Ein langes a.", false],
+      ["Dagesch qal: Das He wird zu b.", false],
+    ],
+  },
+  {
+    prompt: "מִלָּה",
+    question: "Was kann der Punkt hier markieren?",
+    answers: [
+      ["Dagesch forte: ein verstärkter oder verdoppelter Konsonant.", true],
+      ["Ein zusätzliches i.", false],
+      ["Mappiq im abschließenden He.", false],
+    ],
+  },
+];
+
 const defaultState = { seen: [], correct: 0, streak: 0, lastDay: "" };
 const progressKey = "althebraeisch-progress";
 let practiceMode = "choice";
@@ -39,6 +94,11 @@ function readProgress() {
 let state = readProgress();
 let currentQuestion = null;
 let questionAnswered = false;
+let currentVowel = null;
+let vowelAnswered = false;
+let vowelMode = "choice";
+let currentMarksQuestion = null;
+let marksAnswered = false;
 
 function saveProgress() {
   localStorage.setItem(progressKey, JSON.stringify(state));
@@ -76,6 +136,7 @@ function render() {
     .map(createLetterCard)
     .join("");
   drawAlphabet();
+  drawVowelLessons();
   renderProgress();
 }
 
@@ -88,7 +149,66 @@ function showView(viewId) {
   });
 
   if (viewId === "practice") createQuestion();
+  if (viewId === "vowels") createVowelQuestion();
+  if (viewId === "marks") createMarksQuestion();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function drawVowelLessons() {
+  document.querySelector("#vowel-lessons").innerHTML = vowels.map((vowel) => `
+    <article class="lesson-card">
+      <div class="lesson-hebrew" lang="he" dir="rtl">${vowel.he}</div>
+      <h3>${vowel.name}</h3>
+      <div class="vowel-sound">${vowel.soundText}</div>
+      <p>${vowel.example}.</p>
+    </article>
+  `).join("");
+}
+
+function createVowelQuestion() {
+  currentVowel = vowels[Math.floor(Math.random() * vowels.length)];
+  vowelAnswered = false;
+  document.querySelector("#vowel-prompt").textContent = currentVowel.he;
+  document.querySelector("#vowel-feedback").textContent = vowelMode === "choice"
+    ? "Wähle den passenden Grundlaut."
+    : "Tippe den Grundlaut ein und bestätige.";
+  const answers = document.querySelector("#vowel-answers");
+  const form = document.querySelector("#vowel-text-answer");
+  const input = document.querySelector("#vowel-input");
+  answers.hidden = vowelMode !== "choice";
+  form.hidden = vowelMode === "choice";
+  input.value = "";
+  if (vowelMode === "typed") {
+    input.focus();
+    return;
+  }
+
+  const options = [...new Set([currentVowel.sound, ...vowels.map((vowel) => vowel.sound)])]
+    .sort(() => Math.random() - 0.5);
+  const selected = [currentVowel.sound, ...options.filter((sound) => sound !== currentVowel.sound).slice(0, 3)]
+    .sort(() => Math.random() - 0.5);
+  answers.innerHTML = selected.map((sound) =>
+    `<button class="answer" data-vowel-sound="${sound}">${sound}</button>`,
+  ).join("");
+}
+
+function createMarksQuestion() {
+  currentMarksQuestion = marksQuestions[Math.floor(Math.random() * marksQuestions.length)];
+  marksAnswered = false;
+  document.querySelector("#marks-prompt").textContent = currentMarksQuestion.prompt;
+  document.querySelector("#marks-kind").textContent = currentMarksQuestion.question;
+  document.querySelector("#marks-feedback").textContent = "Wähle die passende Erklärung.";
+  const options = [...currentMarksQuestion.answers].sort(() => Math.random() - 0.5);
+  document.querySelector("#marks-answers").innerHTML = options.map(([label, correct]) =>
+    `<button class="answer" data-correct="${correct}">${label}</button>`,
+  ).join("");
+}
+
+function recordNonAlphabetCorrect() {
+  state.correct += 1;
+  updateStreak();
+  saveProgress();
+  renderProgress();
 }
 
 function createQuestion() {
@@ -249,6 +369,70 @@ function submitTypedAnswer(event) {
 }
 
 document.querySelector("#text-answer").addEventListener("submit", submitTypedAnswer);
+
+document.querySelectorAll("[data-vowel-mode]").forEach((button) => {
+  button.addEventListener("click", () => {
+    vowelMode = button.dataset.vowelMode;
+    document.querySelectorAll("[data-vowel-mode]").forEach((modeButton) => {
+      const active = modeButton === button;
+      modeButton.classList.toggle("active", active);
+      modeButton.setAttribute("aria-pressed", String(active));
+    });
+    createVowelQuestion();
+  });
+});
+
+document.querySelector("#next-vowel-question").addEventListener("click", createVowelQuestion);
+document.querySelector("#vowel-answers").addEventListener("click", (event) => {
+  const answer = event.target.closest(".answer");
+  if (!answer || vowelAnswered || !currentVowel) return;
+  finishVowelQuestion(answer.dataset.vowelSound === currentVowel.sound, answer);
+});
+
+function finishVowelQuestion(isCorrect, selectedButton = null) {
+  if (vowelAnswered) return;
+  vowelAnswered = true;
+  if (selectedButton) {
+    document.querySelectorAll("#vowel-answers .answer").forEach((button) => {
+      if (button.dataset.vowelSound === currentVowel.sound) button.classList.add("correct");
+    });
+    if (!isCorrect) selectedButton.classList.add("wrong");
+  }
+
+  const explanation = currentVowel.name === "Schwa"
+    ? "Beim Schwa hängt es von der Position ab: kurzes unbetontes e oder kein Vokal."
+    : `${currentVowel.name} klingt ungefähr wie „${currentVowel.soundText}“ (${currentVowel.example}).`;
+  document.querySelector("#vowel-feedback").textContent = isCorrect
+    ? `Richtig! ${explanation}`
+    : `Noch nicht ganz. ${currentVowel.name}: ${explanation}`;
+  if (isCorrect) recordNonAlphabetCorrect();
+}
+
+document.querySelector("#vowel-text-answer").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (vowelAnswered || !currentVowel) return;
+  const value = normalizeAnswer(document.querySelector("#vowel-input").value);
+  const expected = currentVowel.sound;
+  const accepted = [expected];
+  if (currentVowel.name === "Schwa") accepted.push("e", "schwa", "stumm", "kein vokal", "nichts");
+  finishVowelQuestion(accepted.some((answer) => normalizeAnswer(answer) === value));
+});
+
+document.querySelector("#next-marks-question").addEventListener("click", createMarksQuestion);
+document.querySelector("#marks-answers").addEventListener("click", (event) => {
+  const answer = event.target.closest(".answer");
+  if (!answer || marksAnswered || !currentMarksQuestion) return;
+  marksAnswered = true;
+  document.querySelectorAll("#marks-answers .answer").forEach((button) => {
+    if (button.dataset.correct === "true") button.classList.add("correct");
+  });
+  const isCorrect = answer.dataset.correct === "true";
+  if (!isCorrect) answer.classList.add("wrong");
+  document.querySelector("#marks-feedback").textContent = isCorrect
+    ? "Richtig!"
+    : `Noch nicht ganz. ${currentMarksQuestion.answers.find(([, correct]) => correct)[0]}`;
+  if (isCorrect) recordNonAlphabetCorrect();
+});
 
 document.querySelector("#today").textContent = new Intl.DateTimeFormat("de-CH", {
   weekday: "long",

@@ -27,6 +27,8 @@
           <button class="nav active" data-view="home"><span>⌂</span>Übersicht</button>
           <button class="nav" data-view="alphabet"><span>א</span>Alphabet</button>
           <button class="nav" data-view="practice"><span>✳</span>Alphabet üben</button>
+          <button class="nav" data-view="vowels"><span>ְ</span>Vokalzeichen</button>
+          <button class="nav" data-view="marks"><span>ּ</span>Dagesch &amp; Mappiq</button>
           <button class="nav" data-view="words"><span>▤</span>Wortschatz</button>
           <div class="side-note">
             <strong>שלב אחר שלב</strong>
@@ -117,6 +119,83 @@
               </form>
               <div class="feedback" id="feedback" aria-live="polite">Wähle eine Antwort, um zu starten.</div>
               <button class="next" id="new-question">Neue Frage</button>
+            </div>
+          </section>
+
+          <section class="view" id="vowels">
+            <div class="alphabet-title">
+              <div>
+                <h2>Vokalzeichen · Nikud</h2>
+                <p>Die Zeichen ergänzen die Vokale, die im hebräischen Schriftbild meist nicht mit Buchstaben geschrieben werden.</p>
+              </div>
+            </div>
+            <div class="lesson-note">
+              Wir verwenden überall בּ (Bet mit Dagesch) als Beispiel. Der Punkt in der Mitte ist Dagesch und gehört zum Konsonanten b; die Zeichen daneben oder darunter sind die Vokalzeichen.
+            </div>
+            <div class="lesson-grid" id="vowel-lessons"></div>
+            <div class="lesson-note">
+              Die Lautangaben sind eine vereinfachte Lesehilfe nach der heute üblichen israelischen Aussprache. In historischen und traditionellen Lesarten gibt es weitere Unterschiede: Ein Kamatz klingt nicht immer wie „a“, und die Vokallänge lässt sich nicht allein am Zeichen ablesen.
+            </div>
+            <div class="section-head"><h3>Vokale üben</h3></div>
+            <div class="practice-modes" role="group" aria-label="Vokalübung">
+              <button class="mode active" data-vowel-mode="choice" aria-pressed="true">Auswahl</button>
+              <button class="mode" data-vowel-mode="typed" aria-pressed="false">Laut eintippen</button>
+            </div>
+            <div class="practice-card">
+              <div class="practice-kind" id="vowel-kind">Welchen Laut zeigt dieses Zeichen?</div>
+              <div class="prompt" id="vowel-prompt" dir="rtl"></div>
+              <div class="answer-area" id="vowel-answers"></div>
+              <form class="text-answer" id="vowel-text-answer" hidden>
+                <label class="sr-only" for="vowel-input">Vokallaut</label>
+                <input id="vowel-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Vokallaut eingeben …" />
+                <button class="next" type="submit">Prüfen</button>
+              </form>
+              <div class="feedback" id="vowel-feedback" aria-live="polite">Wähle den Laut aus oder tippe ihn ein.</div>
+              <button class="next" id="next-vowel-question">Neues Zeichen</button>
+            </div>
+            <section class="genesis">
+              <div class="eyebrow">ZUM ABSCHLUSS</div>
+              <h3>Genesis 1,1</h3>
+              <p class="genesis-hebrew" lang="he" dir="rtl">בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ׃</p>
+              <p class="genesis-transliteration">Bereschit bara Elohim et haschamajim we’et ha’arez.</p>
+              <p>Im Anfang schuf Gott die Himmel und die Erde.</p>
+            </section>
+          </section>
+
+          <section class="view" id="marks">
+            <div class="alphabet-title">
+              <div>
+                <h2>Dagesch &amp; Mappiq</h2>
+                <p>Der Punkt in der Mitte eines Buchstabens kann seine Aussprache oder Funktion markieren.</p>
+              </div>
+            </div>
+            <div class="lesson-grid">
+              <article class="lesson-card">
+                <div class="lesson-hebrew" dir="rtl">בּ &nbsp; ב</div>
+                <h3>Dagesch qal</h3>
+                <p>Der Punkt steht im Buchstaben. Bei Bet zeigt er den Verschlusslaut <strong>b</strong> an; ohne Punkt wird Bet in der üblichen israelischen Aussprache wie <strong>v</strong> gesprochen.</p>
+                <div class="sound-pair"><span><b>בּ</b> · b wie in Ball</span><span><b>ב</b> · v wie in Vase</span></div>
+                <p>Dasselbe Muster gilt in vielen Lerntraditionen für Kaf (כּ k / כ ch) und Pe (פּ p / פ f). Bei Gimel, Dalet und Taw unterscheiden sich die überlieferten Aussprachen je nach Tradition.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" dir="rtl">לָהּ</div>
+                <h3>Mappiq</h3>
+                <p>Ein Punkt im abschließenden He (הּ) heißt Mappiq. Er zeigt, dass das He als Konsonant gesprochen wird, ungefähr als <strong>h</strong>.</p>
+                <div class="sound-pair"><span><b>לָהּ</b> · lah</span><span>Das abschließende הּ klingt mit.</span></div>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" dir="rtl">מִלָּה</div>
+                <h3>Dagesch forte</h3>
+                <p>In anderen Fällen markiert der Punkt einen verstärkten oder verdoppelten Konsonanten. Beim Lesen wird der Buchstabe entsprechend betont; die genaue Umsetzung hängt von der Aussprachetradition ab.</p>
+              </article>
+            </div>
+            <div class="section-head"><h3>Dagesch und Mappiq üben</h3></div>
+            <div class="practice-card">
+              <div class="practice-kind" id="marks-kind">Was zeigt der Punkt in diesem Beispiel?</div>
+              <div class="prompt" id="marks-prompt" dir="rtl"></div>
+              <div class="answer-area" id="marks-answers"></div>
+              <div class="feedback" id="marks-feedback" aria-live="polite">Wähle die passende Erklärung.</div>
+              <button class="next" id="next-marks-question">Neue Frage</button>
             </div>
           </section>
 

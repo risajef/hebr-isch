@@ -227,6 +227,9 @@ function submitTypedAnswer(event) {
   const expected = practiceMode === "sound" ? currentQuestion.sound : currentQuestion.name;
   const value = normalizeAnswer(document.querySelector("#answer-input").value);
   const accepted = [expected];
+  if (practiceMode === "sound" && (expected === "ʾ" || expected === "ʿ")) {
+    accepted.push("stumm", "");
+  }
   if (expected === "ʾ") accepted.push("ʔ", "alef", "aleph", "glottal");
   if (expected === "ʿ") accepted.push("ajin", "ayin", "pharyngeal");
 

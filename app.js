@@ -96,9 +96,10 @@ const defaultState = {
   streak: 0,
   lastDay: "",
   completedLessons: [],
-  practiceCorrect: { alphabet: 0, vowels: 0, marks: 0, reading: 0 },
+  practiceCorrect: { alphabet: 0, vowels: 0, marks: 0, reading: 0, vocabulary: 0, grammar: 0, verses: 0 },
   readingSeen: [],
-  leitner: { alphabet: {}, marks: {} },
+  verseSeen: [],
+  leitner: { alphabet: {}, marks: {}, vocabulary: {}, grammar: {} },
 };
 const progressKey = "althebraeisch-progress";
 let practiceMode = "choice";
@@ -112,10 +113,13 @@ function readProgress() {
       ...stored,
       completedLessons: Array.isArray(stored.completedLessons) ? stored.completedLessons : [],
       readingSeen: Array.isArray(stored.readingSeen) ? stored.readingSeen : [],
+      verseSeen: Array.isArray(stored.verseSeen) ? stored.verseSeen : [],
       practiceCorrect: { ...defaultState.practiceCorrect, ...stored.practiceCorrect },
       leitner: {
         alphabet: { ...(stored.leitner?.alphabet || {}) },
         marks: { ...(stored.leitner?.marks || {}) },
+        vocabulary: { ...(stored.leitner?.vocabulary || {}) },
+        grammar: { ...(stored.leitner?.grammar || {}) },
       },
     };
   } catch {
@@ -124,7 +128,8 @@ function readProgress() {
       completedLessons: [],
       practiceCorrect: { ...defaultState.practiceCorrect },
       readingSeen: [],
-      leitner: { alphabet: {}, marks: {} },
+      verseSeen: [],
+      leitner: { alphabet: {}, marks: {}, vocabulary: {}, grammar: {} },
     };
   }
 }
@@ -139,7 +144,14 @@ let currentMarksQuestion = null;
 let marksAnswered = false;
 let currentReadingWord = null;
 let readingAnswered = false;
-const practiceSessions = { alphabet: null, marks: null };
+let vocabularyMode = "choice";
+let currentVocabularyWord = null;
+let vocabularyAnswered = false;
+let currentGrammarQuestion = null;
+let grammarAnswered = false;
+let currentVerseExercise = null;
+let verseAnswered = false;
+const practiceSessions = { alphabet: null, marks: null, vocabulary: null, grammar: null };
 let autoAdvanceTimer = null;
 
 function clearAutoAdvance() {
@@ -147,12 +159,12 @@ function clearAutoAdvance() {
   autoAdvanceTimer = null;
 }
 
-function scheduleAutoAdvance(viewId, showNextQuestion) {
+function scheduleAutoAdvance(viewId, showNextQuestion, delay = 900) {
   clearAutoAdvance();
   autoAdvanceTimer = window.setTimeout(() => {
     autoAdvanceTimer = null;
     if (document.querySelector(".view.active")?.id === viewId) showNextQuestion();
-  }, 900);
+  }, delay);
 }
 
 function saveProgress() {
@@ -192,9 +204,13 @@ function lessonComplete(stage) {
 }
 
 function practiceComplete(stage) {
-  if (state.practiceCorrect[stage] < PRACTICE_GOAL) return false;
+  const goal = stage === "verses" ? verseExercises.length : stage === "reading" ? 8 : PRACTICE_GOAL;
+  if (state.practiceCorrect[stage] < goal) return false;
   if (stage === "alphabet") return alphabetPracticeCards.every(({ id }) => state.leitner.alphabet[id]?.attempts > 0);
   if (stage === "marks") return marksQuestions.every(({ id }) => state.leitner.marks[id]?.attempts > 0);
+  if (stage === "vocabulary") return vocabulary.every(({ id }) => state.leitner.vocabulary[id]?.attempts > 0);
+  if (stage === "grammar") return grammarQuestions.every(({ id }) => state.leitner.grammar[id]?.attempts > 0);
+  if (stage === "verses") return verseExercises.every(({ id }) => state.verseSeen.includes(id));
   return true;
 }
 
@@ -205,6 +221,13 @@ function practiceCoverage(stage) {
   if (stage === "marks") {
     return marksQuestions.filter(({ id }) => state.leitner.marks[id]?.attempts > 0).length / marksQuestions.length;
   }
+  if (stage === "vocabulary") {
+    return vocabulary.filter(({ id }) => state.leitner.vocabulary[id]?.attempts > 0).length / vocabulary.length;
+  }
+  if (stage === "grammar") {
+    return grammarQuestions.filter(({ id }) => state.leitner.grammar[id]?.attempts > 0).length / grammarQuestions.length;
+  }
+  if (stage === "verses") return state.verseSeen.length / verseExercises.length;
   return Math.min(1, state.practiceCorrect[stage] / PRACTICE_GOAL);
 }
 
@@ -253,7 +276,9 @@ function updatePracticeRoundCount(stage) {
   if (!session) return;
   const field = document.querySelector(`#${stage}-round-count`);
   if (!field) return;
-  const unit = stage === "alphabet" ? "Buchstabenformen" : "Zeichen";
+  const unit = stage === "alphabet" ? "Buchstabenformen"
+    : stage === "vocabulary" ? "Wörter"
+      : stage === "grammar" ? "Regeln" : "Zeichen";
   const uncertain = Object.values(state.leitner[stage]).filter((progress) => progress.attempts > 0 && progress.box <= 1).length;
   field.textContent = `${session.seen.size} / ${session.total} ${unit} in dieser Runde · ${uncertain} unsicher`;
 }
@@ -301,16 +326,23 @@ function recordPracticeReview(stage, cardId, isCorrect) {
 
 function updateLearningPath() {
   const stages = [
-    { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben, ihre Namen und die fünf Schlussformen.", action: "Zum Alphabet" },
-    { key: "vowels", lesson: "vowels", practice: "vowels", lessonView: "vowels", practiceView: "vowel-practice", title: "Vokale", description: "Lerne die Nikud-Zeichen und übe ihre Laute.", action: "Zu den Vokalen" },
-    { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Lerne, wie Punkte die Aussprache von Konsonanten verändern.", action: "Zu Dagesch & Mappiq" },
+    { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben, ihre Namen und die fünf Schlussformen.", lessonAction: "Alphabet ansehen", practiceAction: "Alphabet üben", viewPrefix: "alphabet" },
+    { key: "vowels", lesson: "vowels", practice: "vowels", lessonView: "vowels", practiceView: "vowel-practice", title: "Vokale", description: "Lerne die Nikud-Zeichen und übe ihre Laute.", lessonAction: "Vokale ansehen", practiceAction: "Vokale üben", viewPrefix: "vowel" },
+    { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Lerne, wie Punkte die Aussprache von Konsonanten verändern.", lessonAction: "Dagesch & Mappiq ansehen", practiceAction: "Dagesch & Mappiq üben", viewPrefix: "marks" },
+    { key: "vocabulary", lesson: "vocabulary", practice: "vocabulary", lessonView: "vocabulary", practiceView: "vocabulary-practice", title: "Grundwortschatz", description: "Lerne häufige Wörter und ihre Formen.", lessonAction: "Wörter ansehen", practiceAction: "Wörter üben", viewPrefix: "vocabulary" },
+    { key: "grammar", lesson: "grammar", practice: "grammar", lessonView: "grammar", practiceView: "grammar-practice", title: "Grammatik", description: "Lerne fünf Grundmuster und wende sie an.", lessonAction: "Grammatik ansehen", practiceAction: "Grammatik üben", viewPrefix: "grammar" },
   ];
-  const steps = [...stages.flatMap((stage) => [
-    { view: stage.lessonView, title: `Lerne ${stage.title}`, description: stage.description, complete: lessonComplete(stage.lesson), action: stage.key === "letters" ? "Alphabet ansehen" : stage.key === "vowels" ? "Vokale ansehen" : "Dagesch & Mappiq ansehen" },
-    { view: stage.practiceView, title: `Übe ${stage.title}`, description: `${state.practiceCorrect[stage.practice]} von ${PRACTICE_GOAL} richtigen Antworten bis zum Etappenziel.`, complete: practiceComplete(stage.practice), action: stage.key === "letters" ? "Alphabet üben" : stage.key === "vowels" ? "Vokale üben" : "Dagesch & Mappiq üben" },
-  ]),
-  { view: "reading-rules", title: "Lerne die Leseregeln", description: "Erkenne Vokalbuchstaben und Sonderfälle im Wort.", complete: lessonComplete("reading-rules"), action: "Leseregeln ansehen" },
-  { view: "reading-practice", title: "Lies biblische Wörter", description: `${state.practiceCorrect.reading || 0} von 8 Wörtern richtig transkribiert.`, complete: (state.practiceCorrect.reading || 0) >= 8, action: "Leseübungen starten" }];
+  const stageSteps = (stage) => [
+    { view: stage.lessonView, title: `Lerne ${stage.title}`, description: stage.description, complete: lessonComplete(stage.lesson), action: stage.lessonAction },
+    { view: stage.practiceView, title: `Übe ${stage.title}`, description: stage.practice === "vocabulary" ? `${vocabulary.length} Wörter, ${state.practiceCorrect.vocabulary} richtige Antworten.` : stage.practice === "grammar" ? `${grammarRules.length} Regeln, ${state.practiceCorrect.grammar} richtige Antworten.` : `${state.practiceCorrect[stage.practice]} von ${PRACTICE_GOAL} richtigen Antworten bis zum Etappenziel.`, complete: practiceComplete(stage.practice), action: stage.practiceAction },
+  ];
+  const steps = [
+    ...stages.slice(0, 3).flatMap(stageSteps),
+    { view: "reading-rules", title: "Lerne die Leseregeln", description: "Erkenne Vokalbuchstaben und Sonderfälle im Wort.", complete: lessonComplete("reading-rules"), action: "Leseregeln ansehen" },
+    { view: "reading-practice", title: "Lies biblische Wörter", description: `${state.practiceCorrect.reading || 0} von 8 Wörtern richtig transkribiert.`, complete: (state.practiceCorrect.reading || 0) >= 8, action: "Leseübungen starten" },
+    ...stages.slice(3).flatMap(stageSteps),
+    { view: "verse-practice", title: "Übersetze Bibelverse", description: `${state.verseSeen.length} von ${verseExercises.length} Abschnitten bearbeitet.`, complete: practiceComplete("verses"), action: "Verse übersetzen" },
+  ];
   const nextStep = steps.find((step) => !step.complete);
   const completeCount = steps.filter((step) => step.complete).length;
   document.querySelector("#learning-steps").textContent = completeCount;
@@ -330,7 +362,7 @@ function updateLearningPath() {
     continueButton.dataset.go = "home";
     continueButton.textContent = "Lernpfad ansehen →";
     continueTitle.textContent = "Du hast den Lernpfad geschafft!";
-    continueDescription.textContent = "Wiederhole eine Etappe oder lies Genesis 1,1 mit den Vokalzeichen.";
+    continueDescription.textContent = "Wiederhole Wörter und Regeln oder übersetze weitere Bibelverse.";
     continueKicker.textContent = "ALLE ETAPPEN ABGESCHLOSSEN";
   }
 
@@ -342,11 +374,11 @@ function updateLearningPath() {
     document.querySelector(`#${stage.key}-progress`).style.width = `${progress}%`;
     document.querySelector(`#${stage.key}-status`).textContent = done
       ? "Abgeschlossen"
-      : nextStep?.view.startsWith(stage.key === "letters" ? "alphabet" : stage.key === "vowels" ? "vowel" : "marks")
+      : nextStep?.view.startsWith(stage.viewPrefix)
         ? "Jetzt dran"
         : index === 0 ? "Start" : "Danach";
     document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("complete", done);
-    document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("active", !done && nextStep?.view.startsWith(stage.key === "letters" ? "alphabet" : stage.key === "vowels" ? "vowel" : "marks"));
+    document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("active", !done && nextStep?.view.startsWith(stage.viewPrefix));
   });
 
   const readingRulesDone = lessonComplete("reading-rules");
@@ -357,18 +389,32 @@ function updateLearningPath() {
   document.querySelector('[data-path="reading-rules"]').classList.toggle("complete", readingRulesDone);
   document.querySelector('[data-path="reading-rules"]').classList.toggle("active", !readingRulesDone && nextStep?.view === "reading-rules");
 
+  const readingDone = (state.practiceCorrect.reading || 0) >= 8;
+  document.querySelector("#reading-progress").style.width = `${Math.min(100, ((state.practiceCorrect.reading || 0) / 8) * 100)}%`;
+  document.querySelector("#reading-status").textContent = readingDone ? "Abgeschlossen" : nextStep?.view === "reading-practice" ? "Jetzt dran" : "Danach";
+  document.querySelector('[data-path="reading"]').classList.toggle("complete", readingDone);
+  document.querySelector('[data-path="reading"]').classList.toggle("active", !readingDone && nextStep?.view === "reading-practice");
+
+  const verseDone = practiceComplete("verses");
+  document.querySelector("#verses-progress").style.width = `${practiceCoverage("verses") * 100}%`;
+  document.querySelector("#verses-status").textContent = verseDone ? "Abgeschlossen" : nextStep?.view === "verse-practice" ? "Jetzt dran" : "Zum Abschluss";
+  document.querySelector('[data-path="verses"]').classList.toggle("complete", verseDone);
+  document.querySelector('[data-path="verses"]').classList.toggle("active", !verseDone && nextStep?.view === "verse-practice");
+
   document.querySelector("#alphabet-practice-count").textContent = `${state.practiceCorrect.alphabet} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#vowel-practice-count").textContent = `${state.practiceCorrect.vowels} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#marks-practice-count").textContent = `${state.practiceCorrect.marks} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#reading-practice-count").textContent = `${state.practiceCorrect.reading || 0} / 8 Wörter richtig`;
+  document.querySelector("#vocabulary-practice-count").textContent = `${state.practiceCorrect.vocabulary} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#grammar-practice-count").textContent = `${state.practiceCorrect.grammar} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#verse-practice-count").textContent = `${state.verseSeen.length} / ${verseExercises.length} Abschnitte bearbeitet`;
   document.querySelector("#alphabet-completion").hidden = !practiceComplete("alphabet");
   document.querySelector("#vowel-completion").hidden = !practiceComplete("vowels");
   document.querySelector("#marks-completion").hidden = !practiceComplete("marks");
+  document.querySelector("#vocabulary-completion").hidden = !practiceComplete("vocabulary");
+  document.querySelector("#grammar-completion").hidden = !practiceComplete("grammar");
+  document.querySelector("#verse-completion").hidden = !verseDone;
   document.querySelector("#reading-completion").hidden = (state.practiceCorrect.reading || 0) < 8;
-  const readingDone = (state.practiceCorrect.reading || 0) >= 8;
-  document.querySelector("#reading-progress").style.width = `${Math.min(100, ((state.practiceCorrect.reading || 0) / 8) * 100)}%`;
-  document.querySelector("#reading-status").textContent = readingDone ? "Abgeschlossen" : "Zum Abschluss";
-  document.querySelector('[data-path="reading"]').classList.toggle("complete", readingDone);
 }
 
 function completeLesson(stage) {
@@ -389,6 +435,8 @@ function recordCorrectPractice(stage, letter = null) {
 function render() {
   drawAlphabet();
   drawVowelLessons();
+  drawVocabularyCards();
+  drawGrammarLessons();
   renderProgress();
 }
 
@@ -405,6 +453,9 @@ function showView(viewId) {
   if (viewId === "vowel-practice") createVowelQuestion();
   if (viewId === "marks-practice") createMarksQuestion();
   if (viewId === "reading-practice") createReadingQuestion();
+  if (viewId === "vocabulary-practice") createVocabularyQuestion();
+  if (viewId === "grammar-practice") createGrammarQuestion();
+  if (viewId === "verse-practice") createVerseQuestion();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -417,6 +468,40 @@ function drawVowelLessons() {
       <p>${vowel.example}.</p>
     </article>
   `).join("");
+}
+
+function drawVocabularyCards() {
+  const filter = document.querySelector("#vocabulary-filter").value;
+  document.querySelector("#vocabulary-cards").innerHTML = vocabulary.map((word) => {
+    const example = word.form || word.example;
+    const root = word.root ? `<div><b>Wurzel:</b> <span lang="he" dir="rtl">${word.root}</span></div>` : "";
+    const form = example ? `<div><b>Belegform:</b> <span lang="he" dir="rtl">${example.he}</span> · ${example.gloss}${example.analysis ? ` <span>(${example.analysis})</span>` : ""}</div>` : "";
+    const note = word.note ? `<div>${word.note}</div>` : "";
+    const reference = example?.reference ? `<div><b>Stelle:</b> ${example.reference}</div>` : "";
+    return `
+      <article class="word-card" data-category="${word.category}" ${filter !== "all" && filter !== word.category ? "hidden" : ""}>
+        <div class="word-card-head"><div class="word-lemma" lang="he" dir="rtl">${word.lemma}</div><span class="word-type">${word.category}</span></div>
+        <div class="word-reading">${word.reading} · lautnah</div>
+        <div class="word-gloss">${word.gloss}</div>
+        ${(root || form || note || reference) ? `<div class="word-detail">${root}${form}${reference}${note}</div>` : ""}
+      </article>
+    `;
+  }).join("");
+}
+
+function drawGrammarLessons() {
+  document.querySelector("#grammar-lessons").innerHTML = grammarRules.map((rule, index) => {
+    const examples = rule.examples.map((example) => {
+      const [he, gloss] = example.split(" · ");
+      return `<div><span class="grammar-example-he" lang="he" dir="rtl">${he}</span><br />${gloss || ""}</div>`;
+    }).join("");
+    const linkedWords = rule.vocabularyIds
+      .map((id) => vocabulary.find((word) => word.id === id))
+      .filter(Boolean)
+      .map((word) => `<span lang="he" dir="rtl">${word.lemma}</span>`)
+      .join("");
+    return `<article class="lesson-card"><div class="path-number">0${index + 1}</div><h3>${rule.title}</h3><div class="vowel-sound">${rule.summary}</div><p>${rule.explanation}</p><div class="grammar-examples">${examples}</div><div class="grammar-links">${linkedWords}</div></article>`;
+  }).join("");
 }
 
 function createVowelQuestion() {
@@ -479,6 +564,140 @@ function createReadingQuestion() {
   document.querySelector("#reading-input").value = "";
   document.querySelector("#reading-answer").classList.remove("correct-feedback");
   document.querySelector("#reading-input").focus();
+}
+
+function createVocabularyQuestion() {
+  clearAutoAdvance();
+  currentVocabularyWord = nextPracticeCard("vocabulary", vocabulary, ({ id }) => id);
+  vocabularyAnswered = false;
+  document.querySelector("#vocabulary-prompt").textContent = currentVocabularyWord.lemma;
+  document.querySelector("#vocabulary-kind").textContent = vocabularyMode === "choice"
+    ? "Was bedeutet dieses Wort?"
+    : `Gib eine passende deutsche Bedeutung für ${currentVocabularyWord.category.toLocaleLowerCase("de")} ein.`;
+  document.querySelector("#vocabulary-feedback").textContent = "Rufe die Bedeutung ab.";
+  const choices = document.querySelector("#vocabulary-answers");
+  const form = document.querySelector("#vocabulary-text-answer");
+  const input = document.querySelector("#vocabulary-input");
+  form.classList.remove("correct-feedback");
+  choices.hidden = vocabularyMode !== "choice";
+  form.hidden = vocabularyMode === "choice";
+  input.value = "";
+  if (vocabularyMode === "typed") {
+    input.focus();
+    return;
+  }
+
+  const distractors = shuffle(vocabulary.filter((word) => word.id !== currentVocabularyWord.id
+    && word.category === currentVocabularyWord.category
+    && word.gloss !== currentVocabularyWord.gloss));
+  const fallback = shuffle(vocabulary.filter((word) => word.id !== currentVocabularyWord.id && word.gloss !== currentVocabularyWord.gloss));
+  const answers = shuffle([...new Set([currentVocabularyWord.gloss, ...distractors.map(({ gloss }) => gloss), ...fallback.map(({ gloss }) => gloss)])].slice(0, 4));
+  choices.innerHTML = answers.map((gloss) => `<button class="answer" data-gloss="${gloss}">${gloss}</button>`).join("");
+}
+
+function finishVocabularyQuestion(isCorrect, selectedButton = null) {
+  if (vocabularyAnswered || !currentVocabularyWord) return;
+  vocabularyAnswered = true;
+  const feedback = document.querySelector("#vocabulary-feedback");
+  if (selectedButton) {
+    document.querySelectorAll("#vocabulary-answers .answer").forEach((button) => {
+      if (button.dataset.gloss === currentVocabularyWord.gloss) button.classList.add("correct");
+    });
+    if (!isCorrect) selectedButton.classList.add("wrong");
+  }
+  feedback.textContent = isCorrect
+    ? `Richtig: ${currentVocabularyWord.gloss}.`
+    : `Noch nicht ganz: ${currentVocabularyWord.gloss}.`;
+  recordPracticeReview("vocabulary", currentVocabularyWord.id, isCorrect);
+  if (isCorrect) {
+    recordCorrectPractice("vocabulary");
+    if (!selectedButton) document.querySelector("#vocabulary-text-answer").classList.add("correct-feedback");
+    scheduleAutoAdvance("vocabulary-practice", createVocabularyQuestion, 1200);
+  }
+}
+
+function createGrammarQuestion() {
+  clearAutoAdvance();
+  currentGrammarQuestion = nextPracticeCard("grammar", grammarQuestions, ({ id }) => id);
+  grammarAnswered = false;
+  document.querySelector("#grammar-kind").textContent = currentGrammarQuestion.prompt;
+  document.querySelector("#grammar-prompt").textContent = currentGrammarQuestion.promptHe;
+  document.querySelector("#grammar-feedback").textContent = "Wähle die passende Erklärung.";
+  document.querySelector("#grammar-answers").innerHTML = shuffle(currentGrammarQuestion.options)
+    .map((option) => `<button class="answer" data-answer="${option}">${option}</button>`).join("");
+}
+
+function finishGrammarQuestion(selectedButton) {
+  if (grammarAnswered || !currentGrammarQuestion) return;
+  grammarAnswered = true;
+  const isCorrect = selectedButton.dataset.answer === currentGrammarQuestion.answer;
+  document.querySelectorAll("#grammar-answers .answer").forEach((button) => {
+    if (button.dataset.answer === currentGrammarQuestion.answer) button.classList.add("correct");
+  });
+  if (!isCorrect) selectedButton.classList.add("wrong");
+  document.querySelector("#grammar-feedback").textContent = isCorrect
+    ? `Richtig. ${currentGrammarQuestion.explanation}`
+    : `Noch nicht ganz. ${currentGrammarQuestion.explanation}`;
+  recordPracticeReview("grammar", currentGrammarQuestion.id, isCorrect);
+  if (isCorrect) {
+    recordCorrectPractice("grammar");
+    scheduleAutoAdvance("grammar-practice", createGrammarQuestion, 1400);
+  }
+}
+
+function createVerseQuestion() {
+  clearAutoAdvance();
+  const unseen = verseExercises.filter(({ id }) => !state.verseSeen.includes(id));
+  const pool = unseen.length ? unseen : verseExercises.filter(({ id }) => id !== currentVerseExercise?.id);
+  currentVerseExercise = pool[Math.floor(Math.random() * pool.length)];
+  verseAnswered = false;
+  document.querySelector("#verse-reference").textContent = currentVerseExercise.reference;
+  document.querySelector("#verse-prompt").textContent = currentVerseExercise.he;
+  document.querySelector("#verse-input").value = "";
+  document.querySelector("#verse-answer").classList.remove("correct-feedback");
+  document.querySelector("#verse-feedback").textContent = "Was bedeutet dieser Abschnitt?";
+  document.querySelector("#verse-explanation").hidden = true;
+  document.querySelector("#verse-translation").textContent = "";
+  document.querySelector("#verse-note").textContent = "";
+  document.querySelector("#verse-breakdown").innerHTML = "";
+  document.querySelector("#verse-input").focus();
+}
+
+function normalizeTranslation(value) {
+  return normalizeAnswer(value)
+    .replace(/[.,;:!?׃־]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function finishVerseQuestion(value) {
+  if (verseAnswered || !currentVerseExercise) return;
+  verseAnswered = true;
+  const accepted = [currentVerseExercise.translation, ...currentVerseExercise.accepted]
+    .map(normalizeTranslation);
+  const isCorrect = accepted.includes(normalizeTranslation(value));
+  document.querySelector("#verse-feedback").textContent = isCorrect
+    ? "Richtig — so greifen Wortschatz und Grammatik ineinander."
+    : "Noch nicht ganz. Vergleiche deine Übersetzung mit der Auflösung und den Wortteilen.";
+  document.querySelector("#verse-explanation").hidden = false;
+  document.querySelector("#verse-translation").textContent = currentVerseExercise.translation;
+  document.querySelector("#verse-note").textContent = currentVerseExercise.explanation;
+  document.querySelector("#verse-breakdown").innerHTML = currentVerseExercise.segments
+    .map((segment) => `<span><b lang="he" dir="rtl">${segment.he}</b> · ${segment.gloss}</span>`).join("");
+
+  if (isCorrect) {
+    document.querySelector("#verse-answer").classList.add("correct-feedback");
+    const isNewVerse = !state.verseSeen.includes(currentVerseExercise.id);
+    if (isNewVerse) {
+      state.verseSeen.push(currentVerseExercise.id);
+      state.practiceCorrect.verses = Math.min(verseExercises.length, state.practiceCorrect.verses + 1);
+      state.correct += 1;
+    }
+    updateStreak();
+    saveProgress();
+    renderProgress();
+    scheduleAutoAdvance("verse-practice", createVerseQuestion, 4500);
+  }
 }
 
 function createQuestion() {
@@ -727,6 +946,46 @@ document.querySelector("#marks-answers").addEventListener("click", (event) => {
   recordPracticeReview("marks", currentMarksQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("marks");
   if (isCorrect) scheduleAutoAdvance("marks-practice", createMarksQuestion);
+});
+
+document.querySelector("#vocabulary-filter").addEventListener("change", drawVocabularyCards);
+document.querySelectorAll("[data-vocabulary-mode]").forEach((button) => {
+  button.addEventListener("click", () => {
+    vocabularyMode = button.dataset.vocabularyMode;
+    document.querySelectorAll("[data-vocabulary-mode]").forEach((modeButton) => {
+      const active = modeButton === button;
+      modeButton.classList.toggle("active", active);
+      modeButton.setAttribute("aria-pressed", String(active));
+    });
+    createVocabularyQuestion();
+  });
+});
+document.querySelector("#next-vocabulary-question").addEventListener("click", createVocabularyQuestion);
+document.querySelector("#vocabulary-answers").addEventListener("click", (event) => {
+  const answer = event.target.closest(".answer");
+  if (!answer || vocabularyAnswered || !currentVocabularyWord) return;
+  finishVocabularyQuestion(answer.dataset.gloss === currentVocabularyWord.gloss, answer);
+});
+document.querySelector("#vocabulary-text-answer").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (vocabularyAnswered || !currentVocabularyWord) return;
+  const accepted = [currentVocabularyWord.gloss, ...currentVocabularyWord.gloss.split(/[,;]|\s+\/\s+/)]
+    .map((answer) => normalizeAnswer(answer));
+  const value = normalizeAnswer(document.querySelector("#vocabulary-input").value);
+  finishVocabularyQuestion(accepted.includes(value));
+});
+
+document.querySelector("#next-grammar-question").addEventListener("click", createGrammarQuestion);
+document.querySelector("#grammar-answers").addEventListener("click", (event) => {
+  const answer = event.target.closest(".answer");
+  if (!answer || grammarAnswered || !currentGrammarQuestion) return;
+  finishGrammarQuestion(answer);
+});
+
+document.querySelector("#next-verse-question").addEventListener("click", createVerseQuestion);
+document.querySelector("#verse-answer").addEventListener("submit", (event) => {
+  event.preventDefault();
+  finishVerseQuestion(document.querySelector("#verse-input").value);
 });
 
 document.querySelector("#next-reading-question").addEventListener("click", createReadingQuestion);

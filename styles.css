@@ -131,6 +131,26 @@ main { min-width: 0; }
 .practice-completion p { margin: 6px 0 13px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .lesson-note { margin: 16px 0 18px; padding: 17px 19px; border-left: 4px solid var(--green); background: var(--mint); color: var(--ink); font-size: 13px; line-height: 1.65; }
 .lesson-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.word-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.word-card { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); }
+.word-card[hidden] { display: none; }
+.word-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.word-lemma { color: var(--ink); font: 34px/1.2 Arial, sans-serif; }
+.word-type { padding: 4px 7px; border-radius: 99px; background: var(--paper); color: var(--muted); font-size: 10px; white-space: nowrap; }
+.word-reading { margin-top: 3px; color: var(--green); font-size: 12px; }
+.word-gloss { margin-top: 4px; font-size: 15px; font-weight: 700; }
+.word-detail { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.55; }
+.word-detail b { color: var(--ink); }
+.grammar-examples { display: grid; gap: 5px; margin-top: 12px; padding: 10px; background: var(--paper); font-size: 12px; }
+.grammar-example-he { color: var(--ink); font: 20px Arial, sans-serif; }
+.grammar-links, .verse-breakdown { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.grammar-links span, .verse-breakdown span { padding: 5px 8px; border-radius: 8px; background: var(--mint); color: #24564a; font-size: 11px; }
+.grammar-prompt { direction: rtl; font-size: 43px; }
+.verse-explanation { margin-top: 17px; padding: 14px; border-radius: 12px; background: var(--paper); text-align: left; }
+.verse-explanation[hidden] { display: none; }
+.verse-explanation strong { color: var(--green); }
+.verse-explanation p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.verse-breakdown span { background: white; }
 .lesson-card { min-width: 0; padding: 17px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
 .lesson-card h3 { margin: 8px 0 5px; font-size: 15px; }
 .lesson-card p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
@@ -162,7 +182,7 @@ main { min-width: 0; }
   .nav { padding: 10px; white-space: nowrap; }
   .welcome h2 { font-size: 30px; }
   .letters { grid-template-columns: repeat(5, 1fr); }
-  .lesson-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lesson-grid, .word-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .path-grid { grid-template-columns: 1fr; }
   .path-card { padding: 15px; }
   .path-card p { min-height: 0; }
@@ -177,7 +197,7 @@ main { min-width: 0; }
   .continue { padding: 18px; }
   .continue button { padding: 11px; }
   .welcome h2 { font-size: 28px; }
-  .lesson-grid { grid-template-columns: 1fr; }
+  .lesson-grid, .word-grid { grid-template-columns: 1fr; }
   .sound-table { min-width: 620px; }
   .genesis { padding: 18px; }
   .genesis .genesis-hebrew { font-size: 25px; }

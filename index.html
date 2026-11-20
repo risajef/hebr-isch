@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#ffffff" />
     <title>Althebräisch lernen</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="curriculum.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -45,6 +46,20 @@
             <div class="nav-label">ETAPPE 5 · LESEN</div>
             <button class="nav" data-view="reading-practice"><span>א</span>Leseübungen</button>
           </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 6 · WORTSCHATZ</div>
+            <button class="nav" data-view="vocabulary"><span>אָ</span>Grundwortschatz</button>
+            <button class="nav" data-view="vocabulary-practice"><span>✳</span>Wörter üben</button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 7 · GRAMMATIK</div>
+            <button class="nav" data-view="grammar"><span>בְּ</span>Grammatik</button>
+            <button class="nav" data-view="grammar-practice"><span>✳</span>Grammatik üben</button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 8 · VERSTEHEN</div>
+            <button class="nav" data-view="verse-practice"><span>תּ</span>Bibelverse übersetzen</button>
+          </div>
           <div class="side-note">
             <strong>שלב אחר שלב</strong>
             Schritt für Schritt. Schon ein paar Minuten am Tag bringen dich weiter.
@@ -75,7 +90,7 @@
               </div>
               <div class="stat">
                 <div class="stat-label">Lernschritte</div>
-                <div class="stat-value"><span id="learning-steps">0</span><small> / 8</small></div>
+                <div class="stat-value"><span id="learning-steps">0</span><small> / 13</small></div>
                 <div class="stat-foot">Lektion und Übung</div>
               </div>
             </div>
@@ -132,11 +147,35 @@
                 <div class="path-progress"><i id="reading-progress"></i></div>
                 <button class="path-link" data-go="reading-practice">Wörter lesen →</button>
               </article>
+              <article class="path-card" data-path="vocabulary">
+                <div class="path-number">06</div>
+                <div class="path-status" id="vocabulary-status">Danach</div>
+                <h3>Grundwortschatz</h3>
+                <p>50 häufige Wörter mit Grundform, Wurzel und Bibelbeispiel.</p>
+                <div class="path-progress"><i id="vocabulary-progress"></i></div>
+                <button class="path-link" data-go="vocabulary">Wörter ansehen →</button>
+              </article>
+              <article class="path-card" data-path="grammar">
+                <div class="path-number">07</div>
+                <div class="path-status" id="grammar-status">Danach</div>
+                <h3>Grammatik</h3>
+                <p>Artikel, Präpositionen, Zahl, Geschlecht und Verbformen.</p>
+                <div class="path-progress"><i id="grammar-progress"></i></div>
+                <button class="path-link" data-go="grammar">Regeln lernen →</button>
+              </article>
+              <article class="path-card" data-path="verses">
+                <div class="path-number">08</div>
+                <div class="path-status" id="verses-status">Zum Abschluss</div>
+                <h3>Bibelverse übersetzen</h3>
+                <p>Bekannte Wörter und Regeln in echten Versen verbinden.</p>
+                <div class="path-progress"><i id="verses-progress"></i></div>
+                <button class="path-link" data-go="verse-practice">Übersetzen →</button>
+              </article>
             </div>
           </section>
 
           <section class="view" id="alphabet">
-            <div class="step-kicker"><span>ETAPPE 1 VON 5</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 1 VON 8</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Das Alphabet</h2>
@@ -158,7 +197,7 @@
           </section>
 
           <section class="view" id="alphabet-practice">
-            <div class="step-kicker"><span>ETAPPE 1 VON 5</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 1 VON 8</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Alphabet üben</h2>
@@ -192,7 +231,7 @@
           </section>
 
           <section class="view" id="vowels">
-            <div class="step-kicker"><span>ETAPPE 2 VON 5</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 2 VON 8</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Vokale · Nikud</h2>
@@ -213,7 +252,7 @@
           </section>
 
           <section class="view" id="vowel-practice">
-            <div class="step-kicker"><span>ETAPPE 2 VON 5</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 2 VON 8</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Vokale üben</h2>
@@ -252,7 +291,7 @@
           </section>
 
           <section class="view" id="marks">
-            <div class="step-kicker"><span>ETAPPE 3 VON 5</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 3 VON 8</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq</h2>
@@ -286,7 +325,7 @@
           </section>
 
           <section class="view" id="marks-practice">
-            <div class="step-kicker"><span>ETAPPE 3 VON 5</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 3 VON 8</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq üben</h2>
@@ -310,7 +349,7 @@
           </section>
 
           <section class="view" id="reading-rules">
-            <div class="step-kicker"><span>ETAPPE 4 VON 5</span><span>LESE-REGELN</span></div>
+            <div class="step-kicker"><span>ETAPPE 4 VON 8</span><span>LESE-REGELN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Wenn Buchstaben mehr als einen Laut haben</h2>
@@ -362,7 +401,7 @@
           </section>
 
           <section class="view" id="reading-practice">
-            <div class="step-kicker"><span>ETAPPE 5 VON 5</span><span>LESEN · BIBELWÖRTER</span></div>
+            <div class="step-kicker"><span>ETAPPE 5 VON 8</span><span>LESEN · BIBELWÖRTER</span></div>
             <div class="alphabet-title"><div><h2>Leseübungen</h2><p>Lies das vokalisierte Bibelwort und schreibe die Laute mit lateinischen Buchstaben.</p></div></div>
             <div class="lesson-note">Schreibe <b>sch</b> für שׁ, <b>s</b> für שׂ, <b>ch</b> für כ / ח, <b>ts</b> für צ und <b>gh / dh / th</b> für die historischen Reibelaute von ג / ד / ת ohne Dagesch. Bei א und ע darfst du ʾ / ʿ schreiben oder sie weglassen. Groß- und Kleinschreibung ist egal.</div>
             <div class="practice-card reading-card">
@@ -373,6 +412,82 @@
               <div class="feedback" id="reading-feedback" aria-live="polite">Tippe, wie du das Wort aussprichst.</div>
               <button class="next" id="next-reading-question">Nächstes Wort</button>
               <div class="practice-completion" id="reading-completion" hidden><strong>Du liest schon biblische Wörter!</strong><p>Du hast acht Wörter richtig transkribiert. Wähle ein Wort zum Wiederholen oder starte neu.</p><button class="next" id="restart-reading">Weiter üben</button></div>
+            </div>
+          </section>
+
+          <section class="view" id="vocabulary">
+            <div class="step-kicker"><span>ETAPPE 6 VON 8</span><span>1 · WORTSCHATZ LERNEN</span></div>
+            <div class="alphabet-title">
+              <div><h2>Grundwortschatz</h2><p>50 häufige Wörter und hilfreiche Wörter aus den ersten Bibelversen.</p></div>
+              <select class="filter" id="vocabulary-filter" aria-label="Wörter nach Wortart filtern">
+                <option value="all">Alle Wortarten</option>
+                <option value="Partikel">Partikeln</option><option value="Präposition">Präpositionen</option>
+                <option value="Nomen">Nomen</option><option value="Verb">Verben</option>
+                <option value="Adjektiv">Adjektive</option><option value="Pronomen">Pronomen</option>
+                <option value="Artikel">Artikel</option><option value="Zahlwort">Zahlwörter</option>
+              </select>
+            </div>
+            <div class="lesson-note"><strong>So sind die Einträge aufgebaut:</strong> Du lernst ein Wort in seiner Grundform. Bei Verben stehen die Wurzel und eine häufige Bibelform dabei. Die lateinische Zeile ist eine lautnahe Lesehilfe, keine offizielle Transliteration.</div>
+            <div class="word-grid" id="vocabulary-cards"></div>
+            <div class="step-footer"><p>Die Karten geben dir einen ersten Überblick. In der Übung musst du die Bedeutung selbst abrufen.</p><button class="next" data-complete-lesson="vocabulary" data-go="vocabulary-practice">Weiter: Wörter üben →</button></div>
+          </section>
+
+          <section class="view" id="vocabulary-practice">
+            <div class="step-kicker"><span>ETAPPE 6 VON 8</span><span>2 · WORTSCHATZ ÜBEN</span></div>
+            <div class="alphabet-title"><div><h2>Wörter üben</h2><p>Rufe die Bedeutung ab. Unsichere Wörter kommen in der Runde häufiger wieder.</p></div></div>
+            <div class="practice-modes" role="group" aria-label="Wortschatz-Übungsart">
+              <button class="mode active" data-vocabulary-mode="choice" aria-pressed="true">Auswahl</button>
+              <button class="mode" data-vocabulary-mode="typed" aria-pressed="false">Bedeutung eintippen</button>
+            </div>
+            <div class="practice-card">
+              <div class="practice-count" id="vocabulary-practice-count">0 / 5 richtige Antworten</div>
+              <div class="practice-count" id="vocabulary-round-count">0 / 50 Wörter in dieser Runde</div>
+              <div class="practice-kind" id="vocabulary-kind">Was bedeutet dieses Wort?</div>
+              <div class="prompt" id="vocabulary-prompt" lang="he" dir="rtl"></div>
+              <div class="answer-area" id="vocabulary-answers"></div>
+              <form class="text-answer" id="vocabulary-text-answer" hidden><label class="sr-only" for="vocabulary-input">Deutsche Bedeutung</label><input id="vocabulary-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Bedeutung eingeben …" /><button class="next" type="submit">Prüfen</button></form>
+              <div class="feedback" id="vocabulary-feedback" aria-live="polite">Wähle die Bedeutung oder tippe sie ein.</div>
+              <button class="next" id="next-vocabulary-question">Neue Frage</button>
+              <div class="practice-completion" id="vocabulary-completion" hidden><strong>Grundwortschatz geübt!</strong><p>Alle 50 Wörter sind einmal vorgekommen. Unsichere Wörter übst du weiter.</p><button class="next" data-go="grammar">Weiter zur Grammatik →</button></div>
+            </div>
+          </section>
+
+          <section class="view" id="grammar">
+            <div class="step-kicker"><span>ETAPPE 7 VON 8</span><span>1 · GRAMMATIK LERNEN</span></div>
+            <div class="alphabet-title"><div><h2>Fünf erste Grammatikregeln</h2><p>Kurze Muster helfen dir, die bekannten Wörter im Satz zu verbinden.</p></div></div>
+            <div class="lesson-note">Grammatik und Wortschatz greifen ineinander: Die Beispiele verwenden Wörter aus den Karten, und die Bibelverse setzen beides zusammen.</div>
+            <div class="lesson-grid grammar-grid" id="grammar-lessons"></div>
+            <div class="step-footer"><p>Du musst noch nicht jede Form erklären können. Wichtig ist, die fünf Muster beim Lesen wiederzuerkennen.</p><button class="next" data-complete-lesson="grammar" data-go="grammar-practice">Weiter: Grammatik üben →</button></div>
+          </section>
+
+          <section class="view" id="grammar-practice">
+            <div class="step-kicker"><span>ETAPPE 7 VON 8</span><span>2 · GRAMMATIK ÜBEN</span></div>
+            <div class="alphabet-title"><div><h2>Grammatik üben</h2><p>Erkenne die Funktion eines Musters im Wort oder Satz.</p></div></div>
+            <div class="practice-card">
+              <div class="practice-count" id="grammar-practice-count">0 / 5 richtige Antworten</div>
+              <div class="practice-count" id="grammar-round-count">0 / 5 Regeln in dieser Runde</div>
+              <div class="practice-kind" id="grammar-kind">Was zeigt dieses Muster?</div>
+              <div class="prompt grammar-prompt" id="grammar-prompt" lang="he" dir="rtl"></div>
+              <div class="answer-area" id="grammar-answers"></div>
+              <div class="feedback" id="grammar-feedback" aria-live="polite">Wähle die passende Erklärung.</div>
+              <button class="next" id="next-grammar-question">Neue Frage</button>
+              <div class="practice-completion" id="grammar-completion" hidden><strong>Die fünf Muster sitzen.</strong><p>Jetzt kannst du sie in echten Bibelversen wiederfinden.</p><button class="next" data-go="verse-practice">Bibelverse übersetzen →</button></div>
+            </div>
+          </section>
+
+          <section class="view" id="verse-practice">
+            <div class="step-kicker"><span>ETAPPE 8 VON 8</span><span>BIBELVERSE ÜBERSETZEN</span></div>
+            <div class="alphabet-title"><div><h2>Vom Wort zum Vers</h2><p>Übersetze kurze Abschnitte. Danach siehst du, wie Wörter und Grammatik zusammenwirken.</p></div></div>
+            <div class="lesson-note">Schreibe eine sinngemäße deutsche Übersetzung. Kleine Unterschiede in der Wortstellung oder Artikelwahl sind in Ordnung.</div>
+            <div class="practice-card reading-card">
+              <div class="practice-count" id="verse-practice-count">0 / 4 Abschnitte richtig</div>
+              <div class="practice-kind" id="verse-reference">Genesis 1,1 · Satzteil</div>
+              <div class="prompt reading-prompt" id="verse-prompt" lang="he" dir="rtl"></div>
+              <form class="text-answer" id="verse-answer"><label class="sr-only" for="verse-input">Deutsche Übersetzung</label><input id="verse-input" autocomplete="off" autocapitalize="sentences" spellcheck="false" placeholder="Übersetzung eintippen …" /><button class="next" type="submit">Prüfen</button></form>
+              <div class="feedback" id="verse-feedback" aria-live="polite">Was bedeutet dieser Abschnitt?</div>
+              <div class="verse-explanation" id="verse-explanation" hidden><strong id="verse-translation"></strong><p id="verse-note"></p><div class="verse-breakdown" id="verse-breakdown"></div></div>
+              <button class="next" id="next-verse-question">Nächster Abschnitt</button>
+              <div class="practice-completion" id="verse-completion" hidden><strong>Du hast die ersten Verse übersetzt!</strong><p>Deine Wörter und Grammatikregeln helfen dir jetzt beim Lesen von Genesis.</p><button class="next" data-go="home">Lernpfad ansehen →</button></div>
             </div>
           </section>
         </main>

@@ -9,18 +9,30 @@ const letters = [
   { he: "ח", name: "Chet", sound: "ch" },
   { he: "ט", name: "Tet", sound: "t" },
   { he: "י", name: "Jod", sound: "j" },
-  { he: "כ", final: "ך", name: "Kaf", sound: "k" },
+  { he: "כ", final: "ך", finalSound: "ch", name: "Kaf", sound: "k" },
   { he: "ל", name: "Lamed", sound: "l" },
   { he: "מ", final: "ם", name: "Mem", sound: "m" },
   { he: "נ", final: "ן", name: "Nun", sound: "n" },
   { he: "ס", name: "Samech", sound: "s" },
   { he: "ע", name: "Ajin", sound: "ʿ" },
-  { he: "פ", final: "ף", name: "Pe", sound: "p" },
+  { he: "פ", final: "ף", finalSound: "f", name: "Pe", sound: "p" },
   { he: "צ", final: "ץ", name: "Tsadi", sound: "ts" },
   { he: "ק", name: "Kof", sound: "k" },
   { he: "ר", name: "Resh", sound: "r" },
   { he: "ש", name: "Schin", sound: "sch" },
   { he: "ת", name: "Taw", sound: "t" },
+];
+
+const alphabetPracticeCards = [
+  ...letters.map((letter) => ({ ...letter, id: letter.he, baseHe: letter.he, isFinal: false })),
+  ...letters.filter((letter) => letter.final).map((letter) => ({
+    ...letter,
+    id: `final-${letter.he}`,
+    he: letter.final,
+    baseHe: letter.he,
+    sound: letter.finalSound || letter.sound,
+    isFinal: true,
+  })),
 ];
 
 const vowels = [
@@ -136,12 +148,16 @@ function saveProgress() {
 
 function createLetterCard(letter) {
   const finalForm = letter.final ? ` · Schlussform ${letter.final}` : "";
+  const forms = letter.final
+    ? `<span class="he">${letter.he}</span><span class="form-arrow" aria-hidden="true">→</span><span class="he final-he">${letter.final}</span>`
+    : `<span class="he">${letter.he}</span>`;
+  const sound = letter.finalSound ? `${letter.sound} → ${letter.finalSound}` : letter.sound;
 
   return `
     <button class="letter" data-letter="${letter.he}" title="${letter.name}${finalForm}">
-      <div class="he">${letter.he}</div>
-      <div class="trans">${letter.sound}</div>
-      <div class="name">${letter.name}</div>
+      <div class="letter-forms" dir="ltr">${forms}</div>
+      <div class="trans">${sound}</div>
+      <div class="name">${letter.name}${finalForm}</div>
     </button>
   `;
 }
@@ -166,14 +182,14 @@ function lessonComplete(stage) {
 
 function practiceComplete(stage) {
   if (state.practiceCorrect[stage] < PRACTICE_GOAL) return false;
-  if (stage === "alphabet") return letters.every(({ he }) => state.leitner.alphabet[he]?.attempts > 0);
+  if (stage === "alphabet") return alphabetPracticeCards.every(({ id }) => state.leitner.alphabet[id]?.attempts > 0);
   if (stage === "marks") return marksQuestions.every(({ id }) => state.leitner.marks[id]?.attempts > 0);
   return true;
 }
 
 function practiceCoverage(stage) {
   if (stage === "alphabet") {
-    return letters.filter(({ he }) => state.leitner.alphabet[he]?.attempts > 0).length / letters.length;
+    return alphabetPracticeCards.filter(({ id }) => state.leitner.alphabet[id]?.attempts > 0).length / alphabetPracticeCards.length;
   }
   if (stage === "marks") {
     return marksQuestions.filter(({ id }) => state.leitner.marks[id]?.attempts > 0).length / marksQuestions.length;
@@ -226,7 +242,7 @@ function updatePracticeRoundCount(stage) {
   if (!session) return;
   const field = document.querySelector(`#${stage}-round-count`);
   if (!field) return;
-  const unit = stage === "alphabet" ? "Buchstaben" : "Zeichen";
+  const unit = stage === "alphabet" ? "Buchstabenformen" : "Zeichen";
   const uncertain = Object.values(state.leitner[stage]).filter((progress) => progress.attempts > 0 && progress.box <= 1).length;
   field.textContent = `${session.seen.size} / ${session.total} ${unit} in dieser Runde · ${uncertain} unsicher`;
 }
@@ -274,7 +290,7 @@ function recordPracticeReview(stage, cardId, isCorrect) {
 
 function updateLearningPath() {
   const stages = [
-    { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben und übe ihre Namen und Laute.", action: "Zum Alphabet" },
+    { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben, ihre Namen und die fünf Schlussformen.", action: "Zum Alphabet" },
     { key: "vowels", lesson: "vowels", practice: "vowels", lessonView: "vowels", practiceView: "vowel-practice", title: "Vokale", description: "Lerne die Nikud-Zeichen und übe ihre Laute.", action: "Zu den Vokalen" },
     { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Lerne, wie Punkte die Aussprache von Konsonanten verändern.", action: "Zu Dagesch & Mappiq" },
   ];
@@ -343,7 +359,7 @@ function completeLesson(stage) {
 function recordCorrectPractice(stage, letter = null) {
   state.correct += 1;
   state.practiceCorrect[stage] = Math.min(PRACTICE_GOAL, state.practiceCorrect[stage] + 1);
-  if (letter) state.seen = [...new Set([...state.seen, letter.he])];
+  if (letter) state.seen = [...new Set([...state.seen, letter.baseHe || letter.he])];
   updateStreak();
   saveProgress();
   renderProgress();
@@ -439,7 +455,7 @@ function createReadingQuestion() {
 }
 
 function createQuestion() {
-  currentQuestion = nextPracticeCard("alphabet", letters, ({ he }) => he);
+  currentQuestion = nextPracticeCard("alphabet", alphabetPracticeCards, ({ id }) => id);
   questionAnswered = false;
   document.querySelector("#prompt").textContent = currentQuestion.he;
   const feedback = document.querySelector("#feedback");
@@ -455,24 +471,35 @@ function createQuestion() {
   textAnswer.hidden = practiceMode === "choice";
 
   if (practiceMode === "sound") {
-    kind.textContent = "Wie wird dieser Buchstabe ungefähr gesprochen?";
+    kind.textContent = currentQuestion.isFinal
+      ? `Wie klingt die Schlussform von ${currentQuestion.name}?`
+      : "Wie wird dieser Buchstabe ungefähr gesprochen?";
     input.placeholder = "Laut eingeben …";
     input.setAttribute("aria-label", "Laut eingeben");
   } else if (practiceMode === "name") {
-    kind.textContent = "Wie heißt dieser Buchstabe?";
+    kind.textContent = currentQuestion.isFinal
+      ? "Wie heißt der Buchstabe in dieser Schlussform?"
+      : "Wie heißt dieser Buchstabe?";
     input.placeholder = "Buchstabennamen eingeben …";
     input.setAttribute("aria-label", "Buchstabennamen eingeben");
   } else {
-    kind.textContent = "Welcher Laut gehört zu diesem Buchstaben?";
+    kind.textContent = currentQuestion.isFinal
+      ? "Welcher Laut gehört zu dieser Schlussform?"
+      : "Welcher Laut gehört zu diesem Buchstaben?";
   }
 
   if (practiceMode !== "choice") {
     input.focus();
     return;
   }
-  const options = new Map([[currentQuestion.sound, currentQuestion]]);
+  const pairedSounds = currentQuestion.isFinal && currentQuestion.name === "Kaf"
+    ? ["k", "ch"]
+    : currentQuestion.isFinal && currentQuestion.name === "Pe"
+      ? ["p", "f"]
+      : [currentQuestion.sound];
+  const options = new Map(pairedSounds.map((sound) => [sound, currentQuestion]));
   while (options.size < 4) {
-    const candidate = letters[Math.floor(Math.random() * letters.length)];
+    const candidate = alphabetPracticeCards[Math.floor(Math.random() * alphabetPracticeCards.length)];
     if (!options.has(candidate.sound)) options.set(candidate.sound, candidate);
   }
 
@@ -553,10 +580,14 @@ document.querySelector("#answers").addEventListener("click", (event) => {
   if (!isCorrect) answer.classList.add("wrong");
 
   document.querySelector("#feedback").textContent = isCorrect
-    ? "Richtig! כל הכבוד · Kol hakavod!"
-    : `Noch nicht ganz. ${currentQuestion.name} klingt wie „${currentQuestion.sound}“.`;
+    ? currentQuestion.isFinal
+      ? `Richtig! ${currentQuestion.he} ist die Schlussform von ${currentQuestion.name}.`
+      : "Richtig! כל הכבוד · Kol hakavod!"
+    : currentQuestion.isFinal
+      ? `Noch nicht ganz. Die Schlussform von ${currentQuestion.name} klingt ungefähr wie „${currentQuestion.sound}“.`
+      : `Noch nicht ganz. ${currentQuestion.name} klingt wie „${currentQuestion.sound}“.`;
 
-  recordPracticeReview("alphabet", currentQuestion.he, isCorrect);
+  recordPracticeReview("alphabet", currentQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 });
 
@@ -586,10 +617,14 @@ function submitTypedAnswer(event) {
   const isCorrect = accepted.some((answer) => normalizeAnswer(answer) === value);
   questionAnswered = true;
   document.querySelector("#feedback").textContent = isCorrect
-    ? "Richtig! כל הכבוד · Kol hakavod!"
-    : `Noch nicht ganz. ${practiceMode === "sound" ? `Der ungefähre Laut ist „${expected}“` : `Der Buchstabe heißt ${expected}`}.`;
+    ? currentQuestion.isFinal
+      ? `Richtig! ${currentQuestion.he} ist die Schlussform von ${currentQuestion.name}.`
+      : "Richtig! כל הכבוד · Kol hakavod!"
+    : currentQuestion.isFinal
+      ? `Noch nicht ganz. ${currentQuestion.he} ist die Schlussform von ${currentQuestion.name}; ${practiceMode === "sound" ? `der Laut ist ungefähr „${expected}“` : `der Buchstabenname bleibt ${currentQuestion.name}`}.`
+      : `Noch nicht ganz. ${practiceMode === "sound" ? `Der ungefähre Laut ist „${expected}“` : `Der Buchstabe heißt ${expected}`}.`;
 
-  recordPracticeReview("alphabet", currentQuestion.he, isCorrect);
+  recordPracticeReview("alphabet", currentQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 }
 

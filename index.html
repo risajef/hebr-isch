@@ -82,7 +82,7 @@
               <div>
                 <div class="eyebrow" id="continue-kicker">DEIN LERNPFAD</div>
                 <h3 id="continue-title">Starte mit dem Alphabet</h3>
-                <p id="continue-description">Lerne die 22 Buchstaben und übe ihre Namen und Laute.</p>
+                <p id="continue-description">Lerne die 22 Buchstaben und ihre fünf Schlussformen.</p>
                 <div class="progress-track"><i id="progress"></i></div>
               </div>
               <button id="continue-learning" data-go="alphabet">Los geht’s&nbsp; →</button>
@@ -94,7 +94,7 @@
                 <div class="path-number">01</div>
                 <div class="path-status" id="letters-status">Als Nächstes</div>
                 <h3>Alphabet</h3>
-                <p>22 Zeichen, ihre Namen und Laute.</p>
+                <p>22 Buchstaben, Namen, Laute und fünf Schlussformen.</p>
                 <div class="path-progress"><i id="letters-progress"></i></div>
                 <button class="path-link" data-go="alphabet">Etappe öffnen →</button>
               </article>
@@ -130,12 +130,15 @@
             <div class="alphabet-title">
               <div>
                 <h2>Das Alphabet</h2>
-                <p>22 Buchstaben, von rechts nach links gelesen.</p>
+                <p>22 Buchstaben und fünf Schlussformen, von rechts nach links gelesen.</p>
               </div>
               <select class="filter" id="alphabet-filter" aria-label="Buchstaben filtern">
                 <option value="all">Alle Buchstaben</option>
                 <option value="final">Mit Schlussform</option>
               </select>
+            </div>
+            <div class="lesson-note">
+              Fünf Buchstaben sehen am Wortende anders aus: כ→ך, מ→ם, נ→ן, פ→ף und צ→ץ. Es sind keine zusätzlichen Buchstaben; der Name bleibt gleich. Bei Kaf und Pe kann sich die Aussprache wie beim Lautpaar mit und ohne Dagesch unterscheiden.
             </div>
             <div class="letters" id="all-letters"></div>
             <div class="step-footer">
@@ -149,7 +152,7 @@
             <div class="alphabet-title">
               <div>
                 <h2>Alphabet üben</h2>
-                <p>Wähle eine Übungsart. Jede Runde zeigt alle 22 Buchstaben; Fehler kommen bald wieder.</p>
+                <p>Wähle eine Übungsart. Jede Runde zeigt alle 22 Buchstaben und ihre fünf Schlussformen; Fehler kommen bald wieder.</p>
               </div>
             </div>
             <div class="practice-modes" role="group" aria-label="Übungsart">
@@ -159,7 +162,7 @@
             </div>
             <div class="practice-card">
               <div class="practice-count" id="alphabet-practice-count">0 / 5 richtige Antworten</div>
-              <div class="practice-count" id="alphabet-round-count">0 / 22 Buchstaben in dieser Runde</div>
+              <div class="practice-count" id="alphabet-round-count">0 / 27 Buchstabenformen in dieser Runde</div>
               <div class="practice-kind" id="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
               <div class="prompt" id="prompt">א</div>
               <div class="answer-area" id="answers"></div>

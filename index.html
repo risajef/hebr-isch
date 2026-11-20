@@ -40,7 +40,9 @@
             <button class="nav" data-view="marks-practice"><span>✳</span>Dagesch &amp; Mappiq üben</button>
           </div>
           <div class="nav-group">
-            <div class="nav-label">ETAPPE 4 · LESEN</div>
+            <div class="nav-label">ETAPPE 4 · LESE-REGELN</div>
+            <button class="nav" data-view="reading-rules"><span>וֹ</span>Leseregeln</button>
+            <div class="nav-label">ETAPPE 5 · LESEN</div>
             <button class="nav" data-view="reading-practice"><span>א</span>Leseübungen</button>
           </div>
           <div class="side-note">
@@ -73,7 +75,7 @@
               </div>
               <div class="stat">
                 <div class="stat-label">Lernschritte</div>
-                <div class="stat-value"><span id="learning-steps">0</span><small> / 7</small></div>
+                <div class="stat-value"><span id="learning-steps">0</span><small> / 8</small></div>
                 <div class="stat-foot">Lektion und Übung</div>
               </div>
             </div>
@@ -114,8 +116,16 @@
                 <div class="path-progress"><i id="marks-progress"></i></div>
                 <button class="path-link" data-go="marks">Etappe öffnen →</button>
               </article>
-              <article class="path-card" data-path="reading">
+              <article class="path-card" data-path="reading-rules">
                 <div class="path-number">04</div>
+                <div class="path-status" id="reading-rules-status">Danach</div>
+                <h3>Leseregeln</h3>
+                <p>Vokalbuchstaben, Dageschpunkte und Sonderfälle im Wort erkennen.</p>
+                <div class="path-progress"><i id="reading-rules-progress"></i></div>
+                <button class="path-link" data-go="reading-rules">Etappe öffnen →</button>
+              </article>
+              <article class="path-card" data-path="reading">
+                <div class="path-number">05</div>
                 <div class="path-status" id="reading-status">Zum Abschluss</div>
                 <h3>Leseübungen</h3>
                 <p>Biblische Wörter lesen und in lateinischen Lauten schreiben.</p>
@@ -126,7 +136,7 @@
           </section>
 
           <section class="view" id="alphabet">
-            <div class="step-kicker"><span>ETAPPE 1 VON 3</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 1 VON 5</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Das Alphabet</h2>
@@ -148,7 +158,7 @@
           </section>
 
           <section class="view" id="alphabet-practice">
-            <div class="step-kicker"><span>ETAPPE 1 VON 3</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 1 VON 5</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Alphabet üben</h2>
@@ -182,7 +192,7 @@
           </section>
 
           <section class="view" id="vowels">
-            <div class="step-kicker"><span>ETAPPE 2 VON 3</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 2 VON 5</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Vokale · Nikud</h2>
@@ -203,7 +213,7 @@
           </section>
 
           <section class="view" id="vowel-practice">
-            <div class="step-kicker"><span>ETAPPE 2 VON 3</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 2 VON 5</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Vokale üben</h2>
@@ -242,7 +252,7 @@
           </section>
 
           <section class="view" id="marks">
-            <div class="step-kicker"><span>ETAPPE 3 VON 3</span><span>1 · LERNEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 3 VON 5</span><span>1 · LERNEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq</h2>
@@ -276,7 +286,7 @@
           </section>
 
           <section class="view" id="marks-practice">
-            <div class="step-kicker"><span>ETAPPE 3 VON 3</span><span>2 · ÜBEN</span></div>
+            <div class="step-kicker"><span>ETAPPE 3 VON 5</span><span>2 · ÜBEN</span></div>
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq üben</h2>
@@ -293,14 +303,66 @@
               <button class="next" id="next-marks-question">Neue Frage</button>
               <div class="practice-completion" id="marks-completion" hidden>
                 <strong>Alle Zeichen sind einmal dran gewesen!</strong>
-                <p>Unsichere Zeichen kommen in den nächsten Runden erneut. Jetzt kannst du Buchstaben und Vokale in echten Bibelwörtern zusammen lesen.</p>
-                <button class="next" data-go="reading-practice">Zu den Leseübungen →</button>
+                <p>Unsichere Zeichen kommen in den nächsten Runden erneut. Als Nächstes lernst du, wie Buchstaben im Wort ihre Funktion wechseln.</p>
+                <button class="next" data-go="reading-rules">Weiter zu den Leseregeln →</button>
               </div>
             </div>
           </section>
 
+          <section class="view" id="reading-rules">
+            <div class="step-kicker"><span>ETAPPE 4 VON 5</span><span>LESE-REGELN</span></div>
+            <div class="alphabet-title">
+              <div>
+                <h2>Wenn Buchstaben mehr als einen Laut haben</h2>
+                <p>Du kennst jetzt die Zeichen. Hier lernst du, ihre Funktion im ganzen Wort zu erkennen.</p>
+              </div>
+            </div>
+            <div class="lesson-note"><strong>Die wichtigste Idee:</strong> Ein Buchstabe kann ein Konsonant sein oder als Vokalzeichen dienen. Das erkennt man nicht immer an einem einzelnen Zeichen, sondern am Punkt und an den Nachbarzeichen.</div>
+            <div class="lesson-grid reading-rules-grid">
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">שָׁלוֹם</div>
+                <h3>וֹ: o oder wo?</h3>
+                <p>In <b>שָׁלוֹם</b> ist וֹ <i>Cholam male</i>: Das ו dient hier als Vokalzeichen für <b>o</b>. Das ל direkt davor hat keinen eigenen Vokalpunkt. Es kommt kein zusätzliches w dazu: <i>schalom</i>.</p>
+                <p>Ja: In <b>עָוֹן</b> ist es tatsächlich <i>wo</i> (biblisch <i>ʿawon</i>). Das ע direkt davor trägt schon Kamatz; deshalb ist ו ein Konsonant mit eigenem Cholam. Die Form וֹ allein entscheidet es nicht — achte auf den Vokal am vorher gelesenen Buchstaben.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">רוּחַ</div>
+                <h3>וּ: u oder doppeltes w?</h3>
+                <p>In <b>רוּחַ</b> trägt ר keinen eigenen Vokal; וּ ist Schuruk und steht für <b>u</b>. Der Punkt ist hier kein Konsonantenverdoppler: <i>ruach</i>.</p>
+                <p>Hat ו neben dem Punkt innen noch ein eigenes Vokalzeichen, ist der Punkt ein Dagesch forte: Dann wird das Waw verdoppelt. Beispiel <b>קִוִּינוּ</b>: ungefähr <i>qiw-winu</i>.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">מַיִם · אֱלֹהִים · קֻמִי</div>
+                <h3>י: j oder Vokalzeichen?</h3>
+                <p>Jod mit eigenem Vokalzeichen ist ein Konsonant und klingt wie deutsches <b>j</b>, etwa in <b>מַיִם</b> (<i>majim</i>). Folgt י dagegen auf ein passendes i- oder e-Vokalzeichen und hat selbst keinen Vokal, zeigt es den Vokal an: In <b>אֱלֹהִים</b> und <b>קֻמִי</b> sprichst du kein zusätzliches j.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">תּוֹרָה · לָהּ · בָּרָא</div>
+                <h3>ה und א am Wortende</h3>
+                <p>Ein Schluss-He ohne Mappiq ist oft ein stummer Vokalträger: <b>תּוֹרָה</b> endet auf <i>a</i>, nicht auf h. Mit Mappiq, <b>הּ</b>, sprichst du das h: <b>לָהּ</b> <i>lah</i>.</p>
+                <p>Auch Alef kann am Wortende nach einem Vokal ohne eigenen hörbaren Kehllaut stehen, wie in <b>בָּרָא</b> (<i>bara</i>). Am Wortanfang markiert א normalerweise den kurzen Stimmabsatz, den du schon gelernt hast.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">שְׁוָא · קָמָץ</div>
+                <h3>Ein Vokalzeichen, mehrere Funktionen</h3>
+                <p>Schwa kann ein sehr kurzes <b>ə</b> sein oder stumm bleiben. Kamatz klingt meistens wie <b>a</b>; Kamatz katan klingt wie <b>o</b>. Die Wortform entscheidet, welche Lesung passt.</p>
+                <p>Unter א, ה, ח und ע steht statt eines gesprochenen Schwas oft ein Chataf-Vokal. Diese Zeichen liest du als kurze Vokale.</p>
+              </article>
+              <article class="lesson-card">
+                <div class="lesson-hebrew" lang="he" dir="rtl">רוּחַ · מִזְבֵּחַ</div>
+                <h3>Das Patach furtivum</h3>
+                <p>Endet ein Wort auf ח, ע oder הּ, kann nach einem langen i-, e-, o- oder u-Laut ein Patach darunter stehen. Bei diesem Sonderfall hörst du das <b>a vor dem Schlusskonsonanten</b>, obwohl das Zeichen darunter steht: <b>רוּחַ</b> = <i>ru-aḥ</i>, nicht <i>ru-ḥa</i>. Das ist eine Ausnahme zur normalen Reihenfolge Konsonant–Vokal.</p>
+              </article>
+            </div>
+            <div class="lesson-note"><strong>Waw als „und“:</strong> Am Wortanfang kann וְ־ als Vorsilbe „und“ bedeuten, zum Beispiel וְאֵת in Genesis 1,1: ungefähr <i>we’et</i>. Vor bestimmten Lautfolgen verändert diese Vorsilbe ihren Vokal, manchmal zu וּ־. Das ist weiterhin ein gesprochenes Waw; es ist weder Cholam male noch Schuruk im Wortstamm.</div>
+            <div class="step-footer">
+              <p>Beim Lesen prüfst du jetzt: Ist ו oder י Konsonant oder Vokalzeichen? Steht ein End-He mit Mappiq? Liegt ein Patach furtivum vor?</p>
+              <button class="next" data-complete-lesson="reading-rules" data-go="reading-practice">Weiter: Leseübungen →</button>
+            </div>
+          </section>
+
           <section class="view" id="reading-practice">
-            <div class="step-kicker"><span>ETAPPE 4 VON 4</span><span>LESEN · BIBELWÖRTER</span></div>
+            <div class="step-kicker"><span>ETAPPE 5 VON 5</span><span>LESEN · BIBELWÖRTER</span></div>
             <div class="alphabet-title"><div><h2>Leseübungen</h2><p>Lies das vokalisierte Bibelwort und schreibe die Laute mit lateinischen Buchstaben.</p></div></div>
             <div class="lesson-note">Schreibe <b>sch</b> für שׁ, <b>s</b> für שׂ, <b>ch</b> für כ / ח, <b>ts</b> für צ und <b>gh / dh / th</b> für die historischen Reibelaute von ג / ד / ת ohne Dagesch. Bei א und ע darfst du ʾ / ʿ schreiben oder sie weglassen. Groß- und Kleinschreibung ist egal.</div>
             <div class="practice-card reading-card">

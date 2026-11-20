@@ -308,7 +308,9 @@ function updateLearningPath() {
   const steps = [...stages.flatMap((stage) => [
     { view: stage.lessonView, title: `Lerne ${stage.title}`, description: stage.description, complete: lessonComplete(stage.lesson), action: stage.key === "letters" ? "Alphabet ansehen" : stage.key === "vowels" ? "Vokale ansehen" : "Dagesch & Mappiq ansehen" },
     { view: stage.practiceView, title: `Übe ${stage.title}`, description: `${state.practiceCorrect[stage.practice]} von ${PRACTICE_GOAL} richtigen Antworten bis zum Etappenziel.`, complete: practiceComplete(stage.practice), action: stage.key === "letters" ? "Alphabet üben" : stage.key === "vowels" ? "Vokale üben" : "Dagesch & Mappiq üben" },
-  ]), { view: "reading-practice", title: "Lies biblische Wörter", description: `${state.practiceCorrect.reading || 0} von 8 Wörtern richtig transkribiert.`, complete: (state.practiceCorrect.reading || 0) >= 8, action: "Leseübungen starten" }];
+  ]),
+  { view: "reading-rules", title: "Lerne die Leseregeln", description: "Erkenne Vokalbuchstaben und Sonderfälle im Wort.", complete: lessonComplete("reading-rules"), action: "Leseregeln ansehen" },
+  { view: "reading-practice", title: "Lies biblische Wörter", description: `${state.practiceCorrect.reading || 0} von 8 Wörtern richtig transkribiert.`, complete: (state.practiceCorrect.reading || 0) >= 8, action: "Leseübungen starten" }];
   const nextStep = steps.find((step) => !step.complete);
   const completeCount = steps.filter((step) => step.complete).length;
   document.querySelector("#learning-steps").textContent = completeCount;
@@ -346,6 +348,14 @@ function updateLearningPath() {
     document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("complete", done);
     document.querySelector(`[data-path="${stage.key}"]`).classList.toggle("active", !done && nextStep?.view.startsWith(stage.key === "letters" ? "alphabet" : stage.key === "vowels" ? "vowel" : "marks"));
   });
+
+  const readingRulesDone = lessonComplete("reading-rules");
+  document.querySelector("#reading-rules-progress").style.width = `${Number(readingRulesDone) * 100}%`;
+  document.querySelector("#reading-rules-status").textContent = readingRulesDone
+    ? "Abgeschlossen"
+    : nextStep?.view === "reading-rules" ? "Jetzt dran" : "Danach";
+  document.querySelector('[data-path="reading-rules"]').classList.toggle("complete", readingRulesDone);
+  document.querySelector('[data-path="reading-rules"]').classList.toggle("active", !readingRulesDone && nextStep?.view === "reading-rules");
 
   document.querySelector("#alphabet-practice-count").textContent = `${state.practiceCorrect.alphabet} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#vowel-practice-count").textContent = `${state.practiceCorrect.vowels} / ${PRACTICE_GOAL} richtige Antworten`;

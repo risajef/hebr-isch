@@ -141,6 +141,20 @@ let marksAnswered = false;
 let currentReadingWord = null;
 let readingAnswered = false;
 const practiceSessions = { alphabet: null, marks: null };
+let autoAdvanceTimer = null;
+
+function clearAutoAdvance() {
+  if (autoAdvanceTimer !== null) window.clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = null;
+}
+
+function scheduleAutoAdvance(viewId, showNextQuestion) {
+  clearAutoAdvance();
+  autoAdvanceTimer = window.setTimeout(() => {
+    autoAdvanceTimer = null;
+    if (document.querySelector(".view.active")?.id === viewId) showNextQuestion();
+  }, 900);
+}
 
 function saveProgress() {
   localStorage.setItem(progressKey, JSON.stringify(state));
@@ -372,6 +386,7 @@ function render() {
 }
 
 function showView(viewId) {
+  clearAutoAdvance();
   document.querySelectorAll(".view").forEach((view) => {
     view.classList.toggle("active", view.id === viewId);
   });
@@ -398,6 +413,7 @@ function drawVowelLessons() {
 }
 
 function createVowelQuestion() {
+  clearAutoAdvance();
   currentVowel = vowels[Math.floor(Math.random() * vowels.length)];
   vowelAnswered = false;
   document.querySelector("#vowel-prompt").textContent = currentVowel.he;
@@ -425,6 +441,7 @@ function createVowelQuestion() {
 }
 
 function createMarksQuestion() {
+  clearAutoAdvance();
   currentMarksQuestion = nextPracticeCard("marks", marksQuestions, ({ id }) => id);
   marksAnswered = false;
   document.querySelector("#marks-prompt").innerHTML = renderFocusedHebrew(currentMarksQuestion);
@@ -455,6 +472,7 @@ function createReadingQuestion() {
 }
 
 function createQuestion() {
+  clearAutoAdvance();
   currentQuestion = nextPracticeCard("alphabet", alphabetPracticeCards, ({ id }) => id);
   questionAnswered = false;
   document.querySelector("#prompt").textContent = currentQuestion.he;
@@ -589,6 +607,7 @@ document.querySelector("#answers").addEventListener("click", (event) => {
 
   recordPracticeReview("alphabet", currentQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
+  if (isCorrect) scheduleAutoAdvance("alphabet-practice", createQuestion);
 });
 
 function normalizeAnswer(value) {
@@ -666,6 +685,7 @@ function finishVowelQuestion(isCorrect, selectedButton = null) {
     ? `Richtig! ${explanation}`
     : `Noch nicht ganz. ${currentVowel.name}: ${explanation}`;
   if (isCorrect) recordCorrectPractice("vowels");
+  if (isCorrect && selectedButton) scheduleAutoAdvance("vowel-practice", createVowelQuestion);
 }
 
 document.querySelector("#vowel-text-answer").addEventListener("submit", (event) => {
@@ -693,6 +713,7 @@ document.querySelector("#marks-answers").addEventListener("click", (event) => {
     : `Noch nicht ganz. ${currentMarksQuestion.sound || "kein h"}: ${currentMarksQuestion.explanation}. Es kommt bald wieder.`;
   recordPracticeReview("marks", currentMarksQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("marks");
+  if (isCorrect) scheduleAutoAdvance("marks-practice", createMarksQuestion);
 });
 
 document.querySelector("#next-reading-question").addEventListener("click", createReadingQuestion);

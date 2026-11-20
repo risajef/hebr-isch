@@ -90,8 +90,16 @@ main { min-width: 0; }
 .answer-area[hidden] { display: none; }
 .answer { min-width: 95px; padding: 12px 17px; border: 1px solid var(--line); border-radius: 11px; background: white; font-weight: 600; }
 .answer:hover { border-color: var(--green); color: var(--green); }
-.answer.correct { border-color: #8fc5a0; background: #e4f4e9; color: #205c35; }
+.answer.correct { border-color: #8fc5a0; background: #e4f4e9; color: #205c35; animation: correct-answer-glow 650ms ease-out; }
 .answer.wrong { border-color: #e0aaa0; background: #fff0ed; color: #983d32; }
+@keyframes correct-answer-glow {
+  0% { box-shadow: 0 0 0 0 #54a87900; }
+  35% { box-shadow: 0 0 0 5px #54a87936; background: #d9f0df; }
+  100% { box-shadow: 0 0 0 0 #54a87900; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .answer.correct { animation: none; }
+}
 .text-answer { display: flex; justify-content: center; gap: 9px; margin-top: 20px; }
 .text-answer input { width: min(100%, 280px); min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; background: white; color: var(--ink); font: inherit; }
 .text-answer input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }

@@ -9,13 +9,13 @@ const letters = [
   { he: "ח", name: "Chet", sound: "ch" },
   { he: "ט", name: "Tet", sound: "t" },
   { he: "י", name: "Jod", sound: "j" },
-  { he: "כ", final: "ך", finalSound: "ch", name: "Kaf", sound: "k" },
+  { he: "כ", final: "ך", name: "Kaf", sound: "k" },
   { he: "ל", name: "Lamed", sound: "l" },
   { he: "מ", final: "ם", name: "Mem", sound: "m" },
   { he: "נ", final: "ן", name: "Nun", sound: "n" },
   { he: "ס", name: "Samech", sound: "s" },
   { he: "ע", name: "Ajin", sound: "ʿ" },
-  { he: "פ", final: "ף", finalSound: "f", name: "Pe", sound: "p" },
+  { he: "פ", final: "ף", name: "Pe", sound: "p" },
   { he: "צ", final: "ץ", name: "Tsadi", sound: "ts" },
   { he: "ק", name: "Kof", sound: "k" },
   { he: "ר", name: "Resh", sound: "r" },
@@ -30,7 +30,6 @@ const alphabetPracticeCards = [
     id: `final-${letter.he}`,
     he: letter.final,
     baseHe: letter.he,
-    sound: letter.finalSound || letter.sound,
     isFinal: true,
   })),
 ];
@@ -64,26 +63,26 @@ const marksQuestions = [
 ].map(([id, prompt, sound, explanation, contrast, focusIndex]) => ({ id, prompt, sound, explanation, contrast, focusIndex }));
 
 const readingWords = [
-  { he: "שָׁלוֹם", answer: "schalom", alternatives: ["shalom"], hint: "Frieden" },
+  { he: "שָׁלוֹם", answer: "schalom", alternatives: ["shalom"], hint: "Frieden", tip: "וֹ ist hier Cholam male und klingt wie o, nicht wie w." },
   { he: "בָּרָא", answer: "bara", hint: "er schuf" },
   { he: "מֶלֶךְ", answer: "melekh", alternatives: ["melech"], hint: "König" },
   { he: "בָּבֶל", answer: "bavel", hint: "Babel" },
-  { he: "רוּחַ", answer: "ruach", alternatives: ["ruakh"], hint: "Wind, Atem, Geist" },
+  { he: "רוּחַ", answer: "ruach", alternatives: ["ruakh"], hint: "Wind, Atem, Geist", tip: "וּ ist Schuruk und klingt wie u; hier kommt kein w dazu." },
   { he: "שָׂרָה", answer: "sara", hint: "Sara" },
   { he: "פָּרָה", answer: "para", hint: "Kuh" },
   { he: "תּוֹרָה", answer: "tora", hint: "Weisung / Tora" },
   { he: "מִלָּה", answer: "milla", alternatives: ["mil-la"], hint: "Wort" },
   { he: "לָהּ", answer: "lah", alternatives: ["la-h"], hint: "zu ihr (mit Mappiq)" },
-  { he: "אֱלֹהִים", answer: "elohim", alternatives: ["ʾelohim"], hint: "Gott" },
+  { he: "אֱלֹהִים", answer: "elohim", alternatives: ["ʾelohim"], hint: "Gott", tip: "י trägt hier den i-Vokal und wird nicht zusätzlich als j gesprochen." },
   { he: "בְּרֵאשִׁית", answer: "bereschit", alternatives: ["bereshit"], hint: "im Anfang" },
   { he: "הָאָרֶץ", answer: "ha'aretz", alternatives: ["haaretz", "ha-aretz"], hint: "die Erde" },
   { he: "דָּבָר", answer: "davar", hint: "Wort / Sache" },
   { he: "כֶּסֶף", answer: "kesef", hint: "Silber / Geld" },
   { he: "מַיִם", answer: "majim", alternatives: ["mayim"], hint: "Wasser" },
   { he: "אֹהֶל", answer: "ohel", alternatives: ["ohel"], hint: "Zelt" },
-  { he: "קֻמִי", answer: "kumi", hint: "steh auf!" },
+  { he: "קֻמִי", answer: "kumi", hint: "steh auf!", tip: "Das abschließende י gehört hier zum langen i; es kommt kein zusätzliches j dazu." },
   { he: "אֲדֹנָי", answer: "adhonai", alternatives: ["adhonay"], hint: "Herr" },
-  { he: "אֳנִיָּה", answer: "oniyya", hint: "Schiff" },
+  { he: "אֳנִיָּה", answer: "oniyya", alternatives: ["onijja"], hint: "Schiff" },
   { he: "דָּג", answer: "dagh", hint: "Fisch" },
   { he: "מִדְבָּר", answer: "midhbar", hint: "Wüste" },
   { he: "בַּת", answer: "bath", hint: "Tochter" },
@@ -165,12 +164,10 @@ function createLetterCard(letter) {
   const forms = letter.final
     ? `<span class="he">${letter.he}</span><span class="form-arrow" aria-hidden="true">→</span><span class="he final-he">${letter.final}</span>`
     : `<span class="he">${letter.he}</span>`;
-  const sound = letter.finalSound ? `${letter.sound} → ${letter.finalSound}` : letter.sound;
-
   return `
     <button class="letter" data-letter="${letter.he}" title="${letter.name}${finalForm}">
       <div class="letter-forms" dir="ltr">${forms}</div>
-      <div class="trans">${sound}</div>
+      <div class="trans">${letter.sound}</div>
       <div class="name">${letter.name}${finalForm}</div>
     </button>
   `;
@@ -423,6 +420,7 @@ function createVowelQuestion() {
   const answers = document.querySelector("#vowel-answers");
   const form = document.querySelector("#vowel-text-answer");
   const input = document.querySelector("#vowel-input");
+  form.classList.remove("correct-feedback");
   answers.hidden = vowelMode !== "choice";
   form.hidden = vowelMode === "choice";
   input.value = "";
@@ -461,6 +459,7 @@ function createMarksQuestion() {
 }
 
 function createReadingQuestion() {
+  clearAutoAdvance();
   const unseen = readingWords.filter(({ he }) => !state.readingSeen.includes(he));
   const pool = unseen.length ? unseen : readingWords.filter(({ he }) => he !== currentReadingWord?.he);
   currentReadingWord = pool[Math.floor(Math.random() * pool.length)];
@@ -468,6 +467,7 @@ function createReadingQuestion() {
   document.querySelector("#reading-prompt").textContent = currentReadingWord.he;
   document.querySelector("#reading-feedback").textContent = "Tippe die Aussprache ein.";
   document.querySelector("#reading-input").value = "";
+  document.querySelector("#reading-answer").classList.remove("correct-feedback");
   document.querySelector("#reading-input").focus();
 }
 
@@ -480,6 +480,7 @@ function createQuestion() {
   const answers = document.querySelector("#answers");
   const textAnswer = document.querySelector("#text-answer");
   const input = document.querySelector("#answer-input");
+  textAnswer.classList.remove("correct-feedback");
   const kind = document.querySelector("#practice-kind");
   feedback.textContent = practiceMode === "choice"
     ? "Wähle die passende Lautangabe."
@@ -510,12 +511,7 @@ function createQuestion() {
     input.focus();
     return;
   }
-  const pairedSounds = currentQuestion.isFinal && currentQuestion.name === "Kaf"
-    ? ["k", "ch"]
-    : currentQuestion.isFinal && currentQuestion.name === "Pe"
-      ? ["p", "f"]
-      : [currentQuestion.sound];
-  const options = new Map(pairedSounds.map((sound) => [sound, currentQuestion]));
+  const options = new Map([[currentQuestion.sound, currentQuestion]]);
   while (options.size < 4) {
     const candidate = alphabetPracticeCards[Math.floor(Math.random() * alphabetPracticeCards.length)];
     if (!options.has(candidate.sound)) options.set(candidate.sound, candidate);
@@ -645,6 +641,10 @@ function submitTypedAnswer(event) {
 
   recordPracticeReview("alphabet", currentQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
+  if (isCorrect) {
+    document.querySelector("#text-answer").classList.add("correct-feedback");
+    scheduleAutoAdvance("alphabet-practice", createQuestion);
+  }
 }
 
 document.querySelector("#text-answer").addEventListener("submit", submitTypedAnswer);
@@ -685,7 +685,10 @@ function finishVowelQuestion(isCorrect, selectedButton = null) {
     ? `Richtig! ${explanation}`
     : `Noch nicht ganz. ${currentVowel.name}: ${explanation}`;
   if (isCorrect) recordCorrectPractice("vowels");
-  if (isCorrect && selectedButton) scheduleAutoAdvance("vowel-practice", createVowelQuestion);
+  if (isCorrect) {
+    if (!selectedButton) document.querySelector("#vowel-text-answer").classList.add("correct-feedback");
+    scheduleAutoAdvance("vowel-practice", createVowelQuestion);
+  }
 }
 
 document.querySelector("#vowel-text-answer").addEventListener("submit", (event) => {
@@ -728,14 +731,15 @@ document.querySelector("#reading-answer").addEventListener("submit", (event) => 
   event.preventDefault();
   if (readingAnswered || !currentReadingWord) return;
   readingAnswered = true;
-  const stripMarks = (value) => normalizeAnswer(value).replace(/ʾ|ʿ/g, "").replace(/[^a-z]/g, "");
+  const stripMarks = (value) => normalizeAnswer(value).replace(/j/g, "y").replace(/ʾ|ʿ/g, "").replace(/[^a-z]/g, "");
   const answer = stripMarks(document.querySelector("#reading-input").value);
   const expected = [currentReadingWord.answer, ...(currentReadingWord.alternatives || [])].map(stripMarks);
   const isCorrect = expected.includes(answer);
   document.querySelector("#reading-feedback").textContent = isCorrect
     ? `Richtig: ${currentReadingWord.answer} · ${currentReadingWord.hint}.`
-    : `Noch nicht ganz: ${currentReadingWord.answer} · ${currentReadingWord.hint}.`;
+    : `Noch nicht ganz: ${currentReadingWord.answer} · ${currentReadingWord.hint}.${currentReadingWord.tip ? ` ${currentReadingWord.tip}` : ""}`;
   if (isCorrect) {
+    document.querySelector("#reading-answer").classList.add("correct-feedback");
     const isNewWord = !state.readingSeen.includes(currentReadingWord.he);
     if (isNewWord) {
       state.readingSeen.push(currentReadingWord.he);
@@ -745,6 +749,7 @@ document.querySelector("#reading-answer").addEventListener("submit", (event) => 
     updateStreak();
     saveProgress();
     renderProgress();
+    scheduleAutoAdvance("reading-practice", createReadingQuestion);
   }
 });
 

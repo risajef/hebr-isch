@@ -98,10 +98,11 @@ main { min-width: 0; }
   100% { box-shadow: 0 0 0 0 #54a87900; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .answer.correct { animation: none; }
+  .answer.correct, .text-answer.correct-feedback input { animation: none; }
 }
 .text-answer { display: flex; justify-content: center; gap: 9px; margin-top: 20px; }
 .text-answer input { width: min(100%, 280px); min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 11px; background: white; color: var(--ink); font: inherit; }
+.text-answer.correct-feedback input { border-color: #8fc5a0; animation: correct-answer-glow 650ms ease-out; }
 .text-answer input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .text-answer[hidden] { display: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

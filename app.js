@@ -40,16 +40,16 @@ const vowels = [
 ];
 
 const marksQuestions = [
-  ["bet-hard", "בּ", "b", "b wie in Ball", "bet"], ["bet-soft", "ב", "v", "v wie in Vase", "bet"],
-  ["gimel-hard", "גּ", "g", "g wie in gut", "gimel"], ["gimel-soft", "ג", "gh", "gh, ein stimmhaftes Reibeg", "gimel"],
-  ["dalet-hard", "דּ", "d", "d wie in Dach", "dalet"], ["dalet-soft", "ד", "dh", "dh wie englisch this", "dalet"],
-  ["kaf-hard", "כּ", "k", "k wie in Kamm", "kaf"], ["kaf-soft", "כ ך", "ch", "ch wie in Bach", "kaf"],
-  ["pe-hard", "פּ", "p", "p wie in Paar", "pe"], ["pe-soft", "פ ף", "f", "f wie in Fass", "pe"],
-  ["taw-hard", "תּ", "t", "t wie in Tag", "taw"], ["taw-soft", "ת", "th", "th wie englisch thin", "taw"],
-  ["shin", "שׁ", "sch", "sch wie in Schule", "shin"], ["sin", "שׂ", "s", "s wie in Sonne", "shin"],
-  ["mappiq", "לָהּ", "h", "h wird mitgesprochen (Mappiq)", "mappiq"], ["final-he", "לָה", "", "kein h; He ist hier stummer Vokalträger", "mappiq"],
-  ["forte", "מִלָּה", "ll", "l wird durch Dagesch forte verdoppelt", "forte"],
-].map(([id, prompt, sound, explanation, contrast]) => ({ id, prompt, sound, explanation, contrast }));
+  ["bet-hard", "בּ", "b", "b wie in Ball", "bet", 0], ["bet-soft", "ב", "v", "v wie in Vase", "bet", 0],
+  ["gimel-hard", "גּ", "g", "g wie in gut", "gimel", 0], ["gimel-soft", "ג", "gh", "gh, ein stimmhaftes Reibeg", "gimel", 0],
+  ["dalet-hard", "דּ", "d", "d wie in Dach", "dalet", 0], ["dalet-soft", "ד", "dh", "dh wie englisch this", "dalet", 0],
+  ["kaf-hard", "כּ", "k", "k wie in Kamm", "kaf", 0], ["kaf-soft", "כ", "ch", "ch wie in Bach", "kaf", 0],
+  ["pe-hard", "פּ", "p", "p wie in Paar", "pe", 0], ["pe-soft", "פ", "f", "f wie in Fass", "pe", 0],
+  ["taw-hard", "תּ", "t", "t wie in Tag", "taw", 0], ["taw-soft", "ת", "th", "th wie englisch thin", "taw", 0],
+  ["shin", "שׁ", "sch", "sch wie in Schule", "shin", 0], ["sin", "שׂ", "s", "s wie in Sonne", "shin", 0],
+  ["mappiq", "לָהּ", "h", "h wird mitgesprochen (Mappiq)", "mappiq", 1], ["final-he", "לָה", "", "kein h; He ist hier stummer Vokalträger", "mappiq", 1],
+  ["forte", "מִלָּה", "ll", "l wird durch Dagesch forte verdoppelt", "forte", 1],
+].map(([id, prompt, sound, explanation, contrast, focusIndex]) => ({ id, prompt, sound, explanation, contrast, focusIndex }));
 
 const readingWords = [
   { he: "שָׁלוֹם", answer: "schalom", alternatives: ["shalom"], hint: "Frieden" },
@@ -231,6 +231,25 @@ function updatePracticeRoundCount(stage) {
   field.textContent = `${session.seen.size} / ${session.total} ${unit} in dieser Runde · ${uncertain} unsicher`;
 }
 
+function splitHebrewGraphemes(text) {
+  const graphemes = [];
+  for (const character of text) {
+    const codePoint = character.codePointAt(0);
+    if (codePoint >= 0x0591 && codePoint <= 0x05c7 && graphemes.length) {
+      graphemes[graphemes.length - 1] += character;
+    } else {
+      graphemes.push(character);
+    }
+  }
+  return graphemes;
+}
+
+function renderFocusedHebrew(question) {
+  return splitHebrewGraphemes(question.prompt).map((grapheme, index) =>
+    index === question.focusIndex ? `<span class="prompt-focus">${grapheme}</span>` : grapheme,
+  ).join("");
+}
+
 function recordPracticeReview(stage, cardId, isCorrect) {
   const records = state.leitner[stage];
   const progress = records[cardId] || { box: 0, attempts: 0, correct: 0, wrong: 0 };
@@ -392,8 +411,8 @@ function createVowelQuestion() {
 function createMarksQuestion() {
   currentMarksQuestion = nextPracticeCard("marks", marksQuestions, ({ id }) => id);
   marksAnswered = false;
-  document.querySelector("#marks-prompt").textContent = currentMarksQuestion.prompt;
-  document.querySelector("#marks-kind").textContent = "Wie wird dieses Zeichen ausgesprochen?";
+  document.querySelector("#marks-prompt").innerHTML = renderFocusedHebrew(currentMarksQuestion);
+  document.querySelector("#marks-kind").textContent = "Wie wird das farbig markierte Zeichen ausgesprochen?";
   document.querySelector("#marks-feedback").textContent = "Wähle die passende Lautangabe.";
   const contrastSounds = {
     bet: ["b", "v"], gimel: ["g", "gh"], dalet: ["d", "dh"],

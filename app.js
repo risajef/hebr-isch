@@ -490,6 +490,7 @@ function drawVocabularyCards() {
 }
 
 function drawGrammarLessons() {
+  const withReadableHebrew = (text) => text.replace(/([\u0590-\u05FF][\u0590-\u05FF־׃]*)/g, '<span class="hebrew-inline" lang="he" dir="rtl">$1</span>');
   document.querySelector("#grammar-lessons").innerHTML = grammarRules.map((rule, index) => {
     const examples = rule.examples.map((example) => {
       const [he, gloss] = example.split(" · ");
@@ -500,7 +501,7 @@ function drawGrammarLessons() {
       .filter(Boolean)
       .map((word) => `<span lang="he" dir="rtl">${word.lemma}</span>`)
       .join("");
-    return `<article class="lesson-card"><div class="path-number">0${index + 1}</div><h3>${rule.title}</h3><div class="vowel-sound">${rule.summary}</div><p>${rule.explanation}</p><div class="grammar-examples">${examples}</div><div class="grammar-links">${linkedWords}</div></article>`;
+    return `<article class="lesson-card"><div class="path-number">0${index + 1}</div><h3>${rule.title}</h3><div class="vowel-sound">${rule.summary}</div><p>${withReadableHebrew(rule.explanation)}</p><div class="grammar-examples">${examples}</div><div class="grammar-links">${linkedWords}</div></article>`;
   }).join("");
 }
 

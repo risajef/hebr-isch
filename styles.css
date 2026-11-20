@@ -88,6 +88,24 @@ main { min-width: 0; }
 .prompt-focus { display: inline-block; padding: 0.02em 0.1em 0.16em; border-radius: 0.16em; background: #f4dfad; color: #49370b; box-shadow: inset 0 -0.07em #c59b39; line-height: 1.25; }
 .answer-area { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
 .answer-area[hidden] { display: none; }
+
+/* Make Hebrew legible for learners, including the small vowel and dagesh marks. */
+[lang="he"] { font-size: 1.4em; line-height: 1.7; }
+.letter .he { font-size: 36px; }
+.prompt { font-size: 88px; line-height: 1.35; }
+.grammar-prompt { font-size: 52px; }
+.word-lemma { font-size: 44px; line-height: 1.45; }
+.grammar-example-he { font-size: 34px; line-height: 1.6; }
+.lesson-hebrew { font-size: clamp(52px, 6vw, 66px); line-height: 1.65; }
+.sound-table td span { font-size: 32px; line-height: 1.5; }
+.genesis .genesis-hebrew { font-size: 38px; line-height: 2; }
+.lesson-note { font-size: 15px; line-height: 1.8; }
+.lesson-card p { font-size: 15px; line-height: 1.8; }
+.grammar-examples { font-size: 15px; line-height: 1.8; }
+.word-detail { font-size: 14px; line-height: 1.8; }
+.sound-pair { font-size: 15px; line-height: 1.8; }
+.vowel-sound { font-size: 25px; }
+.hebrew-inline { display: inline-block; direction: rtl; font-size: 1.45em; line-height: 1.6; white-space: nowrap; }
 .answer { min-width: 95px; padding: 12px 17px; border: 1px solid var(--line); border-radius: 11px; background: white; font-weight: 600; }
 .answer:hover { border-color: var(--green); color: var(--green); }
 .answer.correct { border-color: #8fc5a0; background: #e4f4e9; color: #205c35; animation: correct-answer-glow 650ms ease-out; }
@@ -200,7 +218,7 @@ main { min-width: 0; }
   .lesson-grid, .word-grid { grid-template-columns: 1fr; }
   .sound-table { min-width: 620px; }
   .genesis { padding: 18px; }
-  .genesis .genesis-hebrew { font-size: 25px; }
+  .genesis .genesis-hebrew { font-size: 32px; }
   .step-footer { align-items: stretch; flex-direction: column; }
   .step-footer .next { width: 100%; }
 }

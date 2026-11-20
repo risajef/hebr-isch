@@ -149,7 +149,7 @@
             <div class="alphabet-title">
               <div>
                 <h2>Alphabet üben</h2>
-                <p>Wähle eine Übungsart: Erkennen, den Laut eingeben oder den Namen schreiben.</p>
+                <p>Wähle eine Übungsart. Jede Runde zeigt alle 22 Buchstaben; Fehler kommen bald wieder.</p>
               </div>
             </div>
             <div class="practice-modes" role="group" aria-label="Übungsart">
@@ -159,6 +159,7 @@
             </div>
             <div class="practice-card">
               <div class="practice-count" id="alphabet-practice-count">0 / 5 richtige Antworten</div>
+              <div class="practice-count" id="alphabet-round-count">0 / 22 Buchstaben in dieser Runde</div>
               <div class="practice-kind" id="practice-kind">Welcher Laut gehört zu diesem Buchstaben?</div>
               <div class="prompt" id="prompt">א</div>
               <div class="answer-area" id="answers"></div>
@@ -276,19 +277,20 @@
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq üben</h2>
-                <p>Übe die Laute mit und ohne Punkt.</p>
+                <p>Vergleiche immer beide Laute eines Paars. Jede Runde zeigt alle Zeichen; schwierige kommen öfter wieder.</p>
               </div>
             </div>
             <div class="practice-card">
               <div class="practice-count" id="marks-practice-count">0 / 5 richtige Antworten</div>
+              <div class="practice-count" id="marks-round-count">0 / 17 Zeichen in dieser Runde</div>
               <div class="practice-kind" id="marks-kind">Wie wird dieses Zeichen ausgesprochen?</div>
               <div class="prompt" id="marks-prompt" dir="rtl"></div>
               <div class="answer-area" id="marks-answers"></div>
               <div class="feedback" id="marks-feedback" aria-live="polite">Wähle die passende Aussprache.</div>
               <button class="next" id="next-marks-question">Neue Frage</button>
               <div class="practice-completion" id="marks-completion" hidden>
-                <strong>Die Lautzeichen sitzen!</strong>
-                <p>Jetzt kannst du Buchstaben, Vokale und Punktzeichen in echten Bibelwörtern zusammen lesen.</p>
+                <strong>Alle Zeichen sind einmal dran gewesen!</strong>
+                <p>Unsichere Zeichen kommen in den nächsten Runden erneut. Jetzt kannst du Buchstaben und Vokale in echten Bibelwörtern zusammen lesen.</p>
                 <button class="next" data-go="reading-practice">Zu den Leseübungen →</button>
               </div>
             </div>

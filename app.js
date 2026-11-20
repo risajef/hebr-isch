@@ -40,26 +40,26 @@ const vowels = [
 ];
 
 const marksQuestions = [
-  ["בּ", "b", "b wie in Ball"], ["ב", "v", "v wie in Vase"],
-  ["גּ", "g", "g wie in gut"], ["ג", "gh", "gh, ein stimmhaftes Reibeg"],
-  ["דּ", "d", "d wie in Dach"], ["ד", "dh", "dh wie englisch this"],
-  ["כּ", "k", "k wie in Kamm"], ["כ ך", "ch", "ch wie in Bach"],
-  ["פּ", "p", "p wie in Paar"], ["פ ף", "f", "f wie in Fass"],
-  ["תּ", "t", "t wie in Tag"], ["ת", "th", "th wie englisch thin"],
-  ["שׁ", "sch", "sch wie in Schule"], ["שׂ", "s", "s wie in Sonne"],
-  ["לָהּ", "h", "h wird mitgesprochen (Mappiq)"], ["לָה", "", "kein h; He ist hier stummer Vokalträger"],
-  ["מִלָּה", "ll", "l wird durch Dagesch forte verdoppelt"],
-].map(([prompt, sound, explanation]) => ({ prompt, sound, explanation }));
+  ["bet-hard", "בּ", "b", "b wie in Ball", "bet"], ["bet-soft", "ב", "v", "v wie in Vase", "bet"],
+  ["gimel-hard", "גּ", "g", "g wie in gut", "gimel"], ["gimel-soft", "ג", "gh", "gh, ein stimmhaftes Reibeg", "gimel"],
+  ["dalet-hard", "דּ", "d", "d wie in Dach", "dalet"], ["dalet-soft", "ד", "dh", "dh wie englisch this", "dalet"],
+  ["kaf-hard", "כּ", "k", "k wie in Kamm", "kaf"], ["kaf-soft", "כ ך", "ch", "ch wie in Bach", "kaf"],
+  ["pe-hard", "פּ", "p", "p wie in Paar", "pe"], ["pe-soft", "פ ף", "f", "f wie in Fass", "pe"],
+  ["taw-hard", "תּ", "t", "t wie in Tag", "taw"], ["taw-soft", "ת", "th", "th wie englisch thin", "taw"],
+  ["shin", "שׁ", "sch", "sch wie in Schule", "shin"], ["sin", "שׂ", "s", "s wie in Sonne", "shin"],
+  ["mappiq", "לָהּ", "h", "h wird mitgesprochen (Mappiq)", "mappiq"], ["final-he", "לָה", "", "kein h; He ist hier stummer Vokalträger", "mappiq"],
+  ["forte", "מִלָּה", "ll", "l wird durch Dagesch forte verdoppelt", "forte"],
+].map(([id, prompt, sound, explanation, contrast]) => ({ id, prompt, sound, explanation, contrast }));
 
 const readingWords = [
   { he: "שָׁלוֹם", answer: "schalom", alternatives: ["shalom"], hint: "Frieden" },
   { he: "בָּרָא", answer: "bara", hint: "er schuf" },
-  { he: "מֶלֶךְ", answer: "melekh", alternatives: ["melech", "melek"], hint: "König" },
-  { he: "בָּבֶל", answer: "bavel", alternatives: ["babel"], hint: "Babel" },
+  { he: "מֶלֶךְ", answer: "melekh", alternatives: ["melech"], hint: "König" },
+  { he: "בָּבֶל", answer: "bavel", hint: "Babel" },
   { he: "רוּחַ", answer: "ruach", alternatives: ["ruakh"], hint: "Wind, Atem, Geist" },
-  { he: "שָׂרָה", answer: "sara", alternatives: ["sarah"], hint: "Sara" },
-  { he: "פָּרָה", answer: "para", alternatives: ["parah"], hint: "Kuh" },
-  { he: "תּוֹרָה", answer: "tora", alternatives: ["torah"], hint: "Weisung / Tora" },
+  { he: "שָׂרָה", answer: "sara", hint: "Sara" },
+  { he: "פָּרָה", answer: "para", hint: "Kuh" },
+  { he: "תּוֹרָה", answer: "tora", hint: "Weisung / Tora" },
   { he: "מִלָּה", answer: "milla", alternatives: ["mil-la"], hint: "Wort" },
   { he: "לָהּ", answer: "lah", alternatives: ["la-h"], hint: "zu ihr (mit Mappiq)" },
   { he: "אֱלֹהִים", answer: "elohim", alternatives: ["ʾelohim"], hint: "Gott" },
@@ -70,12 +70,12 @@ const readingWords = [
   { he: "מַיִם", answer: "majim", alternatives: ["mayim"], hint: "Wasser" },
   { he: "אֹהֶל", answer: "ohel", alternatives: ["ohel"], hint: "Zelt" },
   { he: "קֻמִי", answer: "kumi", hint: "steh auf!" },
-  { he: "אֲדֹנָי", answer: "adonai", alternatives: ["adonay"], hint: "Herr" },
-  { he: "אֳנִיָּה", answer: "oniyah", alternatives: ["oniya"], hint: "Schiff" },
-  { he: "דָּג", answer: "dagh", alternatives: ["dag"], hint: "Fisch" },
-  { he: "מִדְבָּר", answer: "midhbar", alternatives: ["midbar"], hint: "Wüste" },
-  { he: "בַּת", answer: "bath", alternatives: ["bat"], hint: "Tochter" },
-  { he: "כָּתוּב", answer: "kathuv", alternatives: ["katuv"], hint: "geschrieben" },
+  { he: "אֲדֹנָי", answer: "adhonai", alternatives: ["adhonay"], hint: "Herr" },
+  { he: "אֳנִיָּה", answer: "oniyya", hint: "Schiff" },
+  { he: "דָּג", answer: "dagh", hint: "Fisch" },
+  { he: "מִדְבָּר", answer: "midhbar", hint: "Wüste" },
+  { he: "בַּת", answer: "bath", hint: "Tochter" },
+  { he: "כָּתוּב", answer: "kathuv", hint: "geschrieben" },
 ];
 
 const PRACTICE_GOAL = 5;
@@ -87,6 +87,7 @@ const defaultState = {
   completedLessons: [],
   practiceCorrect: { alphabet: 0, vowels: 0, marks: 0, reading: 0 },
   readingSeen: [],
+  leitner: { alphabet: {}, marks: {} },
 };
 const progressKey = "althebraeisch-progress";
 let practiceMode = "choice";
@@ -101,12 +102,18 @@ function readProgress() {
       completedLessons: Array.isArray(stored.completedLessons) ? stored.completedLessons : [],
       readingSeen: Array.isArray(stored.readingSeen) ? stored.readingSeen : [],
       practiceCorrect: { ...defaultState.practiceCorrect, ...stored.practiceCorrect },
+      leitner: {
+        alphabet: { ...(stored.leitner?.alphabet || {}) },
+        marks: { ...(stored.leitner?.marks || {}) },
+      },
     };
   } catch {
     return {
       ...defaultState,
       completedLessons: [],
       practiceCorrect: { ...defaultState.practiceCorrect },
+      readingSeen: [],
+      leitner: { alphabet: {}, marks: {} },
     };
   }
 }
@@ -121,6 +128,7 @@ let currentMarksQuestion = null;
 let marksAnswered = false;
 let currentReadingWord = null;
 let readingAnswered = false;
+const practiceSessions = { alphabet: null, marks: null };
 
 function saveProgress() {
   localStorage.setItem(progressKey, JSON.stringify(state));
@@ -157,7 +165,92 @@ function lessonComplete(stage) {
 }
 
 function practiceComplete(stage) {
-  return state.practiceCorrect[stage] >= PRACTICE_GOAL;
+  if (state.practiceCorrect[stage] < PRACTICE_GOAL) return false;
+  if (stage === "alphabet") return letters.every(({ he }) => state.leitner.alphabet[he]?.attempts > 0);
+  if (stage === "marks") return marksQuestions.every(({ id }) => state.leitner.marks[id]?.attempts > 0);
+  return true;
+}
+
+function practiceCoverage(stage) {
+  if (stage === "alphabet") {
+    return letters.filter(({ he }) => state.leitner.alphabet[he]?.attempts > 0).length / letters.length;
+  }
+  if (stage === "marks") {
+    return marksQuestions.filter(({ id }) => state.leitner.marks[id]?.attempts > 0).length / marksQuestions.length;
+  }
+  return Math.min(1, state.practiceCorrect[stage] / PRACTICE_GOAL);
+}
+
+function shuffle(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[other]] = [shuffled[other], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function createPracticeRound(stage, cards, getId) {
+  const cardIds = cards.map(getId);
+  const dueIds = cards
+    .filter((card) => {
+      const progress = state.leitner[stage][getId(card)];
+      return progress?.attempts > 0 && progress.box <= 1;
+    })
+    .sort((first, second) => (state.leitner[stage][getId(first)].box - state.leitner[stage][getId(second)].box)
+      || ((state.leitner[stage][getId(second)].wrong || 0) - (state.leitner[stage][getId(first)].wrong || 0)))
+    .map(getId);
+  practiceSessions[stage] = {
+    queue: [...shuffle(cardIds), ...shuffle(dueIds)],
+    cursor: 0,
+    seen: new Set(),
+    total: cardIds.length,
+  };
+}
+
+function nextPracticeCard(stage, cards, getId) {
+  let session = practiceSessions[stage];
+  if (!session || session.cursor >= session.queue.length) {
+    createPracticeRound(stage, cards, getId);
+    session = practiceSessions[stage];
+  }
+  const cardId = session.queue[session.cursor];
+  session.cursor += 1;
+  session.seen.add(cardId);
+  updatePracticeRoundCount(stage);
+  return cards.find((card) => getId(card) === cardId);
+}
+
+function updatePracticeRoundCount(stage) {
+  const session = practiceSessions[stage];
+  if (!session) return;
+  const field = document.querySelector(`#${stage}-round-count`);
+  if (!field) return;
+  const unit = stage === "alphabet" ? "Buchstaben" : "Zeichen";
+  const uncertain = Object.values(state.leitner[stage]).filter((progress) => progress.attempts > 0 && progress.box <= 1).length;
+  field.textContent = `${session.seen.size} / ${session.total} ${unit} in dieser Runde · ${uncertain} unsicher`;
+}
+
+function recordPracticeReview(stage, cardId, isCorrect) {
+  const records = state.leitner[stage];
+  const progress = records[cardId] || { box: 0, attempts: 0, correct: 0, wrong: 0 };
+  progress.attempts += 1;
+  if (isCorrect) {
+    progress.correct += 1;
+    progress.box = Math.min(5, progress.box + 1);
+  } else {
+    progress.wrong += 1;
+    progress.box = 0;
+    const session = practiceSessions[stage];
+    if (session) {
+      const returnAt = Math.min(session.cursor + 2, session.queue.length);
+      session.queue.splice(returnAt, 0, cardId);
+    }
+  }
+  records[cardId] = progress;
+  saveProgress();
+  updatePracticeRoundCount(stage);
+  return progress;
 }
 
 function updateLearningPath() {
@@ -196,8 +289,8 @@ function updateLearningPath() {
   stages.forEach((stage, index) => {
     const lessonsDone = lessonComplete(stage.lesson);
     const practiceCount = Math.min(state.practiceCorrect[stage.practice], PRACTICE_GOAL);
-    const done = lessonsDone && practiceCount >= PRACTICE_GOAL;
-    const progress = (Number(lessonsDone) * 0.5 + (practiceCount / PRACTICE_GOAL) * 0.5) * 100;
+    const done = lessonsDone && practiceComplete(stage.practice);
+    const progress = (Number(lessonsDone) * 0.5 + practiceCoverage(stage.practice) * 0.5) * 100;
     document.querySelector(`#${stage.key}-progress`).style.width = `${progress}%`;
     document.querySelector(`#${stage.key}-status`).textContent = done
       ? "Abgeschlossen"
@@ -297,13 +390,19 @@ function createVowelQuestion() {
 }
 
 function createMarksQuestion() {
-  currentMarksQuestion = marksQuestions[Math.floor(Math.random() * marksQuestions.length)];
+  currentMarksQuestion = nextPracticeCard("marks", marksQuestions, ({ id }) => id);
   marksAnswered = false;
   document.querySelector("#marks-prompt").textContent = currentMarksQuestion.prompt;
   document.querySelector("#marks-kind").textContent = "Wie wird dieses Zeichen ausgesprochen?";
   document.querySelector("#marks-feedback").textContent = "Wähle die passende Lautangabe.";
-  const sounds = [...new Set(marksQuestions.map(({ sound }) => sound))];
-  const options = [currentMarksQuestion.sound, ...sounds.filter((sound) => sound !== currentMarksQuestion.sound).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+  const contrastSounds = {
+    bet: ["b", "v"], gimel: ["g", "gh"], dalet: ["d", "dh"],
+    kaf: ["k", "ch"], pe: ["p", "f"], taw: ["t", "th"],
+    shin: ["sch", "s"], mappiq: ["h", ""], forte: ["ll", "l"],
+  }[currentMarksQuestion.contrast];
+  const distractors = [...new Set(marksQuestions.map(({ sound }) => sound))]
+    .filter((sound) => !contrastSounds.includes(sound));
+  const options = shuffle([...contrastSounds, ...shuffle(distractors).slice(0, 2)]);
   document.querySelector("#marks-answers").innerHTML = options.map((sound) =>
     `<button class="answer" data-sound="${sound}">${sound || "kein h"}</button>`,
   ).join("");
@@ -321,7 +420,7 @@ function createReadingQuestion() {
 }
 
 function createQuestion() {
-  currentQuestion = letters[Math.floor(Math.random() * letters.length)];
+  currentQuestion = nextPracticeCard("alphabet", letters, ({ he }) => he);
   questionAnswered = false;
   document.querySelector("#prompt").textContent = currentQuestion.he;
   const feedback = document.querySelector("#feedback");
@@ -438,6 +537,7 @@ document.querySelector("#answers").addEventListener("click", (event) => {
     ? "Richtig! כל הכבוד · Kol hakavod!"
     : `Noch nicht ganz. ${currentQuestion.name} klingt wie „${currentQuestion.sound}“.`;
 
+  recordPracticeReview("alphabet", currentQuestion.he, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 });
 
@@ -470,6 +570,7 @@ function submitTypedAnswer(event) {
     ? "Richtig! כל הכבוד · Kol hakavod!"
     : `Noch nicht ganz. ${practiceMode === "sound" ? `Der ungefähre Laut ist „${expected}“` : `Der Buchstabe heißt ${expected}`}.`;
 
+  recordPracticeReview("alphabet", currentQuestion.he, isCorrect);
   if (isCorrect) recordCorrectPractice("alphabet", currentQuestion);
 }
 
@@ -534,8 +635,9 @@ document.querySelector("#marks-answers").addEventListener("click", (event) => {
   });
   if (!isCorrect) answer.classList.add("wrong");
   document.querySelector("#marks-feedback").textContent = isCorrect
-    ? "Richtig!"
-    : `Noch nicht ganz. ${currentMarksQuestion.sound || "kein h"}: ${currentMarksQuestion.explanation}.`;
+    ? `Richtig: ${currentMarksQuestion.explanation}.`
+    : `Noch nicht ganz. ${currentMarksQuestion.sound || "kein h"}: ${currentMarksQuestion.explanation}. Es kommt bald wieder.`;
+  recordPracticeReview("marks", currentMarksQuestion.id, isCorrect);
   if (isCorrect) recordCorrectPractice("marks");
 });
 

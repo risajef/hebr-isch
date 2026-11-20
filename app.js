@@ -40,42 +40,42 @@ const vowels = [
 ];
 
 const marksQuestions = [
-  {
-    prompt: "בּ",
-    question: "Was zeigt der Punkt in diesem Bet?",
-    answers: [
-      ["Der Laut ist b, wie in Ball.", true],
-      ["Der Laut ist v, wie in Vase.", false],
-      ["Der Punkt zeigt einen Vokal an.", false],
-    ],
-  },
-  {
-    prompt: "ב",
-    question: "Wie klingt Bet ohne Dagesch in der üblichen israelischen Aussprache?",
-    answers: [
-      ["Wie v in Vase.", true],
-      ["Wie b in Ball.", false],
-      ["Es wird nicht gesprochen.", false],
-    ],
-  },
-  {
-    prompt: "לָהּ",
-    question: "Was zeigt der Punkt im abschließenden He?",
-    answers: [
-      ["Mappiq: Das He wird als h gesprochen.", true],
-      ["Ein langes a.", false],
-      ["Dagesch qal: Das He wird zu b.", false],
-    ],
-  },
-  {
-    prompt: "מִלָּה",
-    question: "Was kann der Punkt hier markieren?",
-    answers: [
-      ["Dagesch forte: ein verstärkter oder verdoppelter Konsonant.", true],
-      ["Ein zusätzliches i.", false],
-      ["Mappiq im abschließenden He.", false],
-    ],
-  },
+  ["בּ", "b", "b wie in Ball"], ["ב", "v", "v wie in Vase"],
+  ["גּ", "g", "g wie in gut"], ["ג", "gh", "gh, ein stimmhaftes Reibeg"],
+  ["דּ", "d", "d wie in Dach"], ["ד", "dh", "dh wie englisch this"],
+  ["כּ", "k", "k wie in Kamm"], ["כ ך", "ch", "ch wie in Bach"],
+  ["פּ", "p", "p wie in Paar"], ["פ ף", "f", "f wie in Fass"],
+  ["תּ", "t", "t wie in Tag"], ["ת", "th", "th wie englisch thin"],
+  ["שׁ", "sch", "sch wie in Schule"], ["שׂ", "s", "s wie in Sonne"],
+  ["לָהּ", "h", "h wird mitgesprochen (Mappiq)"], ["לָה", "", "kein h; He ist hier stummer Vokalträger"],
+  ["מִלָּה", "ll", "l wird durch Dagesch forte verdoppelt"],
+].map(([prompt, sound, explanation]) => ({ prompt, sound, explanation }));
+
+const readingWords = [
+  { he: "שָׁלוֹם", answer: "schalom", alternatives: ["shalom"], hint: "Frieden" },
+  { he: "בָּרָא", answer: "bara", hint: "er schuf" },
+  { he: "מֶלֶךְ", answer: "melekh", alternatives: ["melech", "melek"], hint: "König" },
+  { he: "בָּבֶל", answer: "bavel", alternatives: ["babel"], hint: "Babel" },
+  { he: "רוּחַ", answer: "ruach", alternatives: ["ruakh"], hint: "Wind, Atem, Geist" },
+  { he: "שָׂרָה", answer: "sara", alternatives: ["sarah"], hint: "Sara" },
+  { he: "פָּרָה", answer: "para", alternatives: ["parah"], hint: "Kuh" },
+  { he: "תּוֹרָה", answer: "tora", alternatives: ["torah"], hint: "Weisung / Tora" },
+  { he: "מִלָּה", answer: "milla", alternatives: ["mil-la"], hint: "Wort" },
+  { he: "לָהּ", answer: "lah", alternatives: ["la-h"], hint: "zu ihr (mit Mappiq)" },
+  { he: "אֱלֹהִים", answer: "elohim", alternatives: ["ʾelohim"], hint: "Gott" },
+  { he: "בְּרֵאשִׁית", answer: "bereschit", alternatives: ["bereshit"], hint: "im Anfang" },
+  { he: "הָאָרֶץ", answer: "ha'aretz", alternatives: ["haaretz", "ha-aretz"], hint: "die Erde" },
+  { he: "דָּבָר", answer: "davar", hint: "Wort / Sache" },
+  { he: "כֶּסֶף", answer: "kesef", hint: "Silber / Geld" },
+  { he: "מַיִם", answer: "majim", alternatives: ["mayim"], hint: "Wasser" },
+  { he: "אֹהֶל", answer: "ohel", alternatives: ["ohel"], hint: "Zelt" },
+  { he: "קֻמִי", answer: "kumi", hint: "steh auf!" },
+  { he: "אֲדֹנָי", answer: "adonai", alternatives: ["adonay"], hint: "Herr" },
+  { he: "אֳנִיָּה", answer: "oniyah", alternatives: ["oniya"], hint: "Schiff" },
+  { he: "דָּג", answer: "dagh", alternatives: ["dag"], hint: "Fisch" },
+  { he: "מִדְבָּר", answer: "midhbar", alternatives: ["midbar"], hint: "Wüste" },
+  { he: "בַּת", answer: "bath", alternatives: ["bat"], hint: "Tochter" },
+  { he: "כָּתוּב", answer: "kathuv", alternatives: ["katuv"], hint: "geschrieben" },
 ];
 
 const PRACTICE_GOAL = 5;
@@ -85,7 +85,8 @@ const defaultState = {
   streak: 0,
   lastDay: "",
   completedLessons: [],
-  practiceCorrect: { alphabet: 0, vowels: 0, marks: 0 },
+  practiceCorrect: { alphabet: 0, vowels: 0, marks: 0, reading: 0 },
+  readingSeen: [],
 };
 const progressKey = "althebraeisch-progress";
 let practiceMode = "choice";
@@ -98,6 +99,7 @@ function readProgress() {
       ...defaultState,
       ...stored,
       completedLessons: Array.isArray(stored.completedLessons) ? stored.completedLessons : [],
+      readingSeen: Array.isArray(stored.readingSeen) ? stored.readingSeen : [],
       practiceCorrect: { ...defaultState.practiceCorrect, ...stored.practiceCorrect },
     };
   } catch {
@@ -117,6 +119,8 @@ let vowelAnswered = false;
 let vowelMode = "choice";
 let currentMarksQuestion = null;
 let marksAnswered = false;
+let currentReadingWord = null;
+let readingAnswered = false;
 
 function saveProgress() {
   localStorage.setItem(progressKey, JSON.stringify(state));
@@ -160,12 +164,12 @@ function updateLearningPath() {
   const stages = [
     { key: "letters", lesson: "alphabet", practice: "alphabet", lessonView: "alphabet", practiceView: "alphabet-practice", title: "Alphabet", description: "Lerne die 22 Buchstaben und übe ihre Namen und Laute.", action: "Zum Alphabet" },
     { key: "vowels", lesson: "vowels", practice: "vowels", lessonView: "vowels", practiceView: "vowel-practice", title: "Vokale", description: "Lerne die Nikud-Zeichen und übe ihre Laute.", action: "Zu den Vokalen" },
-    { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Verstehe die Punktzeichen und übe ihre Wirkung.", action: "Zu Dagesch & Mappiq" },
+    { key: "marks", lesson: "marks", practice: "marks", lessonView: "marks", practiceView: "marks-practice", title: "Dagesch & Mappiq", description: "Lerne, wie Punkte die Aussprache von Konsonanten verändern.", action: "Zu Dagesch & Mappiq" },
   ];
-  const steps = stages.flatMap((stage) => [
+  const steps = [...stages.flatMap((stage) => [
     { view: stage.lessonView, title: `Lerne ${stage.title}`, description: stage.description, complete: lessonComplete(stage.lesson), action: stage.key === "letters" ? "Alphabet ansehen" : stage.key === "vowels" ? "Vokale ansehen" : "Dagesch & Mappiq ansehen" },
     { view: stage.practiceView, title: `Übe ${stage.title}`, description: `${state.practiceCorrect[stage.practice]} von ${PRACTICE_GOAL} richtigen Antworten bis zum Etappenziel.`, complete: practiceComplete(stage.practice), action: stage.key === "letters" ? "Alphabet üben" : stage.key === "vowels" ? "Vokale üben" : "Dagesch & Mappiq üben" },
-  ]);
+  ]), { view: "reading-practice", title: "Lies biblische Wörter", description: `${state.practiceCorrect.reading || 0} von 8 Wörtern richtig transkribiert.`, complete: (state.practiceCorrect.reading || 0) >= 8, action: "Leseübungen starten" }];
   const nextStep = steps.find((step) => !step.complete);
   const completeCount = steps.filter((step) => step.complete).length;
   document.querySelector("#learning-steps").textContent = completeCount;
@@ -207,9 +211,15 @@ function updateLearningPath() {
   document.querySelector("#alphabet-practice-count").textContent = `${state.practiceCorrect.alphabet} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#vowel-practice-count").textContent = `${state.practiceCorrect.vowels} / ${PRACTICE_GOAL} richtige Antworten`;
   document.querySelector("#marks-practice-count").textContent = `${state.practiceCorrect.marks} / ${PRACTICE_GOAL} richtige Antworten`;
+  document.querySelector("#reading-practice-count").textContent = `${state.practiceCorrect.reading || 0} / 8 Wörter richtig`;
   document.querySelector("#alphabet-completion").hidden = !practiceComplete("alphabet");
   document.querySelector("#vowel-completion").hidden = !practiceComplete("vowels");
   document.querySelector("#marks-completion").hidden = !practiceComplete("marks");
+  document.querySelector("#reading-completion").hidden = (state.practiceCorrect.reading || 0) < 8;
+  const readingDone = (state.practiceCorrect.reading || 0) >= 8;
+  document.querySelector("#reading-progress").style.width = `${Math.min(100, ((state.practiceCorrect.reading || 0) / 8) * 100)}%`;
+  document.querySelector("#reading-status").textContent = readingDone ? "Abgeschlossen" : "Zum Abschluss";
+  document.querySelector('[data-path="reading"]').classList.toggle("complete", readingDone);
 }
 
 function completeLesson(stage) {
@@ -244,6 +254,7 @@ function showView(viewId) {
   if (viewId === "alphabet-practice") createQuestion();
   if (viewId === "vowel-practice") createVowelQuestion();
   if (viewId === "marks-practice") createMarksQuestion();
+  if (viewId === "reading-practice") createReadingQuestion();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -289,12 +300,24 @@ function createMarksQuestion() {
   currentMarksQuestion = marksQuestions[Math.floor(Math.random() * marksQuestions.length)];
   marksAnswered = false;
   document.querySelector("#marks-prompt").textContent = currentMarksQuestion.prompt;
-  document.querySelector("#marks-kind").textContent = currentMarksQuestion.question;
-  document.querySelector("#marks-feedback").textContent = "Wähle die passende Erklärung.";
-  const options = [...currentMarksQuestion.answers].sort(() => Math.random() - 0.5);
-  document.querySelector("#marks-answers").innerHTML = options.map(([label, correct]) =>
-    `<button class="answer" data-correct="${correct}">${label}</button>`,
+  document.querySelector("#marks-kind").textContent = "Wie wird dieses Zeichen ausgesprochen?";
+  document.querySelector("#marks-feedback").textContent = "Wähle die passende Lautangabe.";
+  const sounds = [...new Set(marksQuestions.map(({ sound }) => sound))];
+  const options = [currentMarksQuestion.sound, ...sounds.filter((sound) => sound !== currentMarksQuestion.sound).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+  document.querySelector("#marks-answers").innerHTML = options.map((sound) =>
+    `<button class="answer" data-sound="${sound}">${sound || "kein h"}</button>`,
   ).join("");
+}
+
+function createReadingQuestion() {
+  const unseen = readingWords.filter(({ he }) => !state.readingSeen.includes(he));
+  const pool = unseen.length ? unseen : readingWords.filter(({ he }) => he !== currentReadingWord?.he);
+  currentReadingWord = pool[Math.floor(Math.random() * pool.length)];
+  readingAnswered = false;
+  document.querySelector("#reading-prompt").textContent = currentReadingWord.he;
+  document.querySelector("#reading-feedback").textContent = "Tippe die Aussprache ein.";
+  document.querySelector("#reading-input").value = "";
+  document.querySelector("#reading-input").focus();
 }
 
 function createQuestion() {
@@ -505,15 +528,47 @@ document.querySelector("#marks-answers").addEventListener("click", (event) => {
   const answer = event.target.closest(".answer");
   if (!answer || marksAnswered || !currentMarksQuestion) return;
   marksAnswered = true;
+  const isCorrect = answer.dataset.sound === currentMarksQuestion.sound;
   document.querySelectorAll("#marks-answers .answer").forEach((button) => {
-    if (button.dataset.correct === "true") button.classList.add("correct");
+    if (button.dataset.sound === currentMarksQuestion.sound) button.classList.add("correct");
   });
-  const isCorrect = answer.dataset.correct === "true";
   if (!isCorrect) answer.classList.add("wrong");
   document.querySelector("#marks-feedback").textContent = isCorrect
     ? "Richtig!"
-    : `Noch nicht ganz. ${currentMarksQuestion.answers.find(([, correct]) => correct)[0]}`;
+    : `Noch nicht ganz. ${currentMarksQuestion.sound || "kein h"}: ${currentMarksQuestion.explanation}.`;
   if (isCorrect) recordCorrectPractice("marks");
+});
+
+document.querySelector("#next-reading-question").addEventListener("click", createReadingQuestion);
+document.querySelector("#restart-reading").addEventListener("click", () => {
+  state.practiceCorrect.reading = 0;
+  state.readingSeen = [];
+  saveProgress();
+  renderProgress();
+  createReadingQuestion();
+});
+document.querySelector("#reading-answer").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (readingAnswered || !currentReadingWord) return;
+  readingAnswered = true;
+  const stripMarks = (value) => normalizeAnswer(value).replace(/ʾ|ʿ/g, "").replace(/[^a-z]/g, "");
+  const answer = stripMarks(document.querySelector("#reading-input").value);
+  const expected = [currentReadingWord.answer, ...(currentReadingWord.alternatives || [])].map(stripMarks);
+  const isCorrect = expected.includes(answer);
+  document.querySelector("#reading-feedback").textContent = isCorrect
+    ? `Richtig: ${currentReadingWord.answer} · ${currentReadingWord.hint}.`
+    : `Noch nicht ganz: ${currentReadingWord.answer} · ${currentReadingWord.hint}.`;
+  if (isCorrect) {
+    const isNewWord = !state.readingSeen.includes(currentReadingWord.he);
+    if (isNewWord) {
+      state.readingSeen.push(currentReadingWord.he);
+      state.practiceCorrect.reading = Math.min(8, (state.practiceCorrect.reading || 0) + 1);
+      state.correct += 1;
+    }
+    updateStreak();
+    saveProgress();
+    renderProgress();
+  }
 });
 
 document.querySelector("#today").textContent = new Intl.DateTimeFormat("de-CH", {

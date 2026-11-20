@@ -96,7 +96,7 @@ main { min-width: 0; }
 .feedback { min-height: 25px; margin-top: 15px; color: var(--muted); font-size: 13px; }
 .next { padding: 12px 22px; border: 0; border-radius: 11px; background: var(--green); color: white; font-weight: 650; }
 .empty { padding: 35px; border: 1px solid var(--line); border-radius: 18px; background: var(--white); color: var(--muted); text-align: center; }
-.path-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.path-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .path-card { position: relative; min-width: 0; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); transition: 0.2s; }
 .path-card.active { border-color: var(--green); box-shadow: inset 0 0 0 1px var(--green), var(--shadow); }
 .path-card.complete { background: var(--mint); }
@@ -124,6 +124,16 @@ main { min-width: 0; }
 .lesson-hebrew { direction: rtl; color: var(--ink); font: 42px/1.2 Arial, sans-serif; text-align: center; }
 .vowel-sound { margin-top: 5px; color: var(--green); font-family: Georgia, serif; font-size: 22px; font-weight: 700; text-align: center; }
 .sound-pair { display: grid; gap: 7px; margin-top: 12px; padding: 11px; background: var(--paper); font-size: 12px; }
+.sound-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 15px; background: var(--white); }
+.sound-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sound-table th, .sound-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+.sound-table thead { background: var(--mint); color: var(--green); }
+.sound-table tbody tr:last-child th, .sound-table tbody tr:last-child td { border-bottom: 0; }
+.sound-table tbody th { color: var(--muted); font-weight: 650; }
+.sound-table td span { display: inline-block; min-width: 32px; color: var(--ink); font: 24px Arial, sans-serif; }
+.mark-pairs { margin-top: 14px; }
+.reading-card { max-width: 680px; }
+.reading-prompt { margin: 26px 0 12px; }
 .genesis { margin-top: 38px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
 .genesis h3 { margin: 5px 0 12px; font: 24px Georgia, serif; }
 .genesis p { color: var(--muted); font-size: 13px; line-height: 1.6; }
@@ -155,6 +165,7 @@ main { min-width: 0; }
   .continue button { padding: 11px; }
   .welcome h2 { font-size: 28px; }
   .lesson-grid { grid-template-columns: 1fr; }
+  .sound-table { min-width: 620px; }
   .genesis { padding: 18px; }
   .genesis .genesis-hebrew { font-size: 25px; }
   .step-footer { align-items: stretch; flex-direction: column; }

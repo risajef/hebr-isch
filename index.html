@@ -35,9 +35,13 @@
             <button class="nav" data-view="vowel-practice"><span>✳</span>Vokale üben</button>
           </div>
           <div class="nav-group">
-            <div class="nav-label">ETAPPE 3 · PUNKTE</div>
+            <div class="nav-label">ETAPPE 3 · KONSONANTENZEICHEN</div>
             <button class="nav" data-view="marks"><span>ּ</span>Dagesch &amp; Mappiq</button>
             <button class="nav" data-view="marks-practice"><span>✳</span>Dagesch &amp; Mappiq üben</button>
+          </div>
+          <div class="nav-group">
+            <div class="nav-label">ETAPPE 4 · LESEN</div>
+            <button class="nav" data-view="reading-practice"><span>א</span>Leseübungen</button>
           </div>
           <div class="side-note">
             <strong>שלב אחר שלב</strong>
@@ -69,7 +73,7 @@
               </div>
               <div class="stat">
                 <div class="stat-label">Lernschritte</div>
-                <div class="stat-value"><span id="learning-steps">0</span><small> / 6</small></div>
+                <div class="stat-value"><span id="learning-steps">0</span><small> / 7</small></div>
                 <div class="stat-foot">Lektion und Übung</div>
               </div>
             </div>
@@ -106,9 +110,17 @@
                 <div class="path-number">03</div>
                 <div class="path-status" id="marks-status">Zum Schluss</div>
                 <h3>Dagesch &amp; Mappiq</h3>
-                <p>Punkte erkennen und ihre Wirkung üben.</p>
+                <p>Erkennen, wie Punkte Konsonantenlaute verändern.</p>
                 <div class="path-progress"><i id="marks-progress"></i></div>
                 <button class="path-link" data-go="marks">Etappe öffnen →</button>
+              </article>
+              <article class="path-card" data-path="reading">
+                <div class="path-number">04</div>
+                <div class="path-status" id="reading-status">Zum Abschluss</div>
+                <h3>Leseübungen</h3>
+                <p>Biblische Wörter lesen und in lateinischen Lauten schreiben.</p>
+                <div class="path-progress"><i id="reading-progress"></i></div>
+                <button class="path-link" data-go="reading-practice">Wörter lesen →</button>
               </article>
             </div>
           </section>
@@ -230,31 +242,31 @@
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq</h2>
-                <p>Der Punkt in der Mitte eines Buchstabens kann seine Aussprache oder Funktion markieren.</p>
+                <p>Lerne die Konsonantenpaare und erkenne, wann ein abschließendes He wirklich gesprochen wird.</p>
               </div>
             </div>
-            <div class="lesson-grid">
-              <article class="lesson-card">
-                <div class="lesson-hebrew" dir="rtl">בּ &nbsp; ב</div>
-                <h3>Dagesch qal</h3>
-                <p>Der Punkt steht im Buchstaben. Bei Bet zeigt er den Verschlusslaut <strong>b</strong> an; ohne Punkt wird Bet in der üblichen israelischen Aussprache wie <strong>v</strong> gesprochen.</p>
-                <div class="sound-pair"><span><b>בּ</b> · b wie in Ball</span><span><b>ב</b> · v wie in Vase</span></div>
-                <p>Dasselbe Muster gilt in vielen Lerntraditionen für Kaf (כּ k / כ ch) und Pe (פּ p / פ f). Bei Gimel, Dalet und Taw unterscheiden sich die überlieferten Aussprachen je nach Tradition.</p>
-              </article>
-              <article class="lesson-card">
-                <div class="lesson-hebrew" dir="rtl">לָהּ</div>
-                <h3>Mappiq</h3>
-                <p>Ein Punkt im abschließenden He (הּ) heißt Mappiq. Er zeigt, dass das He als Konsonant gesprochen wird, ungefähr als <strong>h</strong>.</p>
-                <div class="sound-pair"><span><b>לָהּ</b> · lah</span><span>Das abschließende הּ klingt mit.</span></div>
-              </article>
-              <article class="lesson-card">
-                <div class="lesson-hebrew" dir="rtl">מִלָּה</div>
-                <h3>Dagesch forte</h3>
-                <p>In anderen Fällen markiert der Punkt einen verstärkten oder verdoppelten Konsonanten. Beim Lesen wird der Buchstabe entsprechend betont; die genaue Umsetzung hängt von der Aussprachetradition ab.</p>
-              </article>
+            <div class="lesson-note"><strong>Wichtig:</strong> Der Punkt ist kein Vokalzeichen. Bei den sechs בגדכפת-Buchstaben markiert Dagesch qal den Verschlusslaut; ohne Punkt steht historisch ein Reibelaut. In vielen heutigen Leseweisen hört man den Unterschied vor allem bei Bet, Kaf und Pe. Die Umschrift hier zeigt die traditionelle Unterscheidung.</div>
+            <div class="sound-table-wrap">
+              <table class="sound-table">
+                <thead><tr><th>Buchstabe</th><th>Mit Dagesch · Verschlusslaut</th><th>Ohne Dagesch · Reibelaut</th></tr></thead>
+                <tbody>
+                  <tr><th>Bet</th><td><span lang="he" dir="rtl">בּ</span> <b>b</b> wie „Ball“</td><td><span lang="he" dir="rtl">ב</span> <b>v</b> wie „Vase“</td></tr>
+                  <tr><th>Gimel</th><td><span lang="he" dir="rtl">גּ</span> <b>g</b> wie „gut“</td><td><span lang="he" dir="rtl">ג</span> <b>gh</b>, ein stimmhaftes Reibeg</td></tr>
+                  <tr><th>Dalet</th><td><span lang="he" dir="rtl">דּ</span> <b>d</b> wie „Dach“</td><td><span lang="he" dir="rtl">ד</span> <b>dh</b> wie englisch „this“</td></tr>
+                  <tr><th>Kaf</th><td><span lang="he" dir="rtl">כּ</span> <b>k</b> wie „Kamm“</td><td><span lang="he" dir="rtl">כ ך</span> <b>ch</b> wie „Bach“</td></tr>
+                  <tr><th>Pe</th><td><span lang="he" dir="rtl">פּ</span> <b>p</b> wie „Paar“</td><td><span lang="he" dir="rtl">פ ף</span> <b>f</b> wie „Fass“</td></tr>
+                  <tr><th>Taw</th><td><span lang="he" dir="rtl">תּ</span> <b>t</b> wie „Tag“</td><td><span lang="he" dir="rtl">ת</span> <b>th</b> wie englisch „thin“</td></tr>
+                </tbody>
+              </table>
             </div>
+            <div class="lesson-grid mark-pairs">
+              <article class="lesson-card"><div class="lesson-hebrew" lang="he" dir="rtl">שׁ &nbsp; שׂ</div><h3>Schin und Sin</h3><p>Der kleine Punkt oben rechts macht Schin: <b>sch</b> wie „Schule“. Der Punkt oben links macht Sin: <b>s</b> wie „Sonne“.</p><div class="sound-pair"><span><b>שׁ</b> · sch</span><span><b>שׂ</b> · s</span></div></article>
+              <article class="lesson-card"><div class="lesson-hebrew" lang="he" dir="rtl">לָהּ &nbsp; לָה</div><h3>Mappiq im He</h3><p>Am Wortende zeigt der Punkt in הּ (Mappiq), dass das He als <b>h</b> mitgesprochen wird. Ein abschließendes ה ohne Mappiq ist häufig ein stummer Vokalträger.</p><div class="sound-pair"><span><b>לָהּ</b> · lah</span><span><b>לָה</b> · la</span></div></article>
+              <article class="lesson-card"><div class="lesson-hebrew" lang="he" dir="rtl">מִלָּה</div><h3>Dagesch forte</h3><p>Ein Punkt kann außerdem einen Konsonanten verdoppeln. In מִלָּה (milla, „Wort“) steht er im Lamed: gesprochen wird ein längeres/verdoppeltes <b>l</b>. Das ist etwas anderes als der Lautwechsel bei Dagesch qal.</p></article>
+            </div>
+            <div class="lesson-note">Alef und Ajin markieren ebenfalls Konsonanten, auch wenn viele Lernende sie nur schwach oder gar nicht hören: א ist ein kurzer Stimmabsatz, ע ein tiefer Kehllaut. Für die folgenden Leseübungen schreiben wir sie als ʾ und ʿ; du darfst sie bei der Eingabe weglassen. Die genaue historische Aussprache rekonstruiert man nicht vollständig aus dieser vereinfachten Lesehilfe.</div>
             <div class="step-footer">
-              <p>Jetzt kennst du die drei Aufgaben des Punktes. In der Übung entscheidest du, was er jeweils anzeigt.</p>
+              <p>Sprich jedes Paar laut aus und achte darauf, was der Punkt verändert.</p>
               <button class="next" data-complete-lesson="marks" data-go="marks-practice">Weiter: Dagesch &amp; Mappiq üben →</button>
             </div>
           </section>
@@ -264,21 +276,36 @@
             <div class="alphabet-title">
               <div>
                 <h2>Dagesch &amp; Mappiq üben</h2>
-                <p>Ist es Dagesch qal, Dagesch forte oder Mappiq?</p>
+                <p>Übe die Laute mit und ohne Punkt.</p>
               </div>
             </div>
             <div class="practice-card">
               <div class="practice-count" id="marks-practice-count">0 / 5 richtige Antworten</div>
-              <div class="practice-kind" id="marks-kind">Was zeigt der Punkt in diesem Beispiel?</div>
+              <div class="practice-kind" id="marks-kind">Wie wird dieses Zeichen ausgesprochen?</div>
               <div class="prompt" id="marks-prompt" dir="rtl"></div>
               <div class="answer-area" id="marks-answers"></div>
-              <div class="feedback" id="marks-feedback" aria-live="polite">Wähle die passende Erklärung.</div>
+              <div class="feedback" id="marks-feedback" aria-live="polite">Wähle die passende Aussprache.</div>
               <button class="next" id="next-marks-question">Neue Frage</button>
               <div class="practice-completion" id="marks-completion" hidden>
-                <strong>Du hast den Lernpfad abgeschlossen!</strong>
-                <p>Du kannst die Etappen jederzeit wiederholen oder Genesis 1,1 lesen.</p>
-                <button class="next" data-go="vowel-practice" data-scroll-to="genesis">Genesis 1,1 lesen →</button>
+                <strong>Die Lautzeichen sitzen!</strong>
+                <p>Jetzt kannst du Buchstaben, Vokale und Punktzeichen in echten Bibelwörtern zusammen lesen.</p>
+                <button class="next" data-go="reading-practice">Zu den Leseübungen →</button>
               </div>
+            </div>
+          </section>
+
+          <section class="view" id="reading-practice">
+            <div class="step-kicker"><span>ETAPPE 4 VON 4</span><span>LESEN · BIBELWÖRTER</span></div>
+            <div class="alphabet-title"><div><h2>Leseübungen</h2><p>Lies das vokalisierte Bibelwort und schreibe die Laute mit lateinischen Buchstaben.</p></div></div>
+            <div class="lesson-note">Schreibe <b>sch</b> für שׁ, <b>s</b> für שׂ, <b>ch</b> für כ / ח, <b>ts</b> für צ und <b>gh / dh / th</b> für die historischen Reibelaute von ג / ד / ת ohne Dagesch. Bei א und ע darfst du ʾ / ʿ schreiben oder sie weglassen. Groß- und Kleinschreibung ist egal.</div>
+            <div class="practice-card reading-card">
+              <div class="practice-count" id="reading-practice-count">0 / 8 Wörter richtig</div>
+              <div class="practice-kind" id="reading-kind">Wie klingt dieses Wort?</div>
+              <div class="prompt reading-prompt" id="reading-prompt" lang="he" dir="rtl"></div>
+              <form class="text-answer" id="reading-answer"><label class="sr-only" for="reading-input">Aussprache in lateinischen Buchstaben</label><input id="reading-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Aussprache eintippen …" /><button class="next" type="submit">Prüfen</button></form>
+              <div class="feedback" id="reading-feedback" aria-live="polite">Tippe, wie du das Wort aussprichst.</div>
+              <button class="next" id="next-reading-question">Nächstes Wort</button>
+              <div class="practice-completion" id="reading-completion" hidden><strong>Du liest schon biblische Wörter!</strong><p>Du hast acht Wörter richtig transkribiert. Wähle ein Wort zum Wiederholen oder starte neu.</p><button class="next" id="restart-reading">Weiter üben</button></div>
             </div>
           </section>
         </main>

@@ -606,9 +606,10 @@ function finishVocabularyQuestion(isCorrect, selectedButton = null) {
     });
     if (!isCorrect) selectedButton.classList.add("wrong");
   }
+  const wordAnswer = `${currentVocabularyWord.lemma} · ${currentVocabularyWord.reading} · ${currentVocabularyWord.gloss}`;
   feedback.textContent = isCorrect
-    ? `Richtig: ${currentVocabularyWord.gloss}.`
-    : `Noch nicht ganz: ${currentVocabularyWord.gloss}.`;
+    ? `Richtig: ${wordAnswer}.`
+    : `Noch nicht ganz. Richtig: ${wordAnswer}.`;
   recordPracticeReview("vocabulary", currentVocabularyWord.id, isCorrect);
   if (isCorrect) {
     recordCorrectPractice("vocabulary");

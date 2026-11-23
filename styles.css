@@ -1,12 +1,12 @@
 :root {
-  --ink: #172b2a;
-  --muted: #687775;
-  --paper: #f6f3ed;
-  --white: #fffefa;
-  --green: #176c5c;
-  --mint: #dceee5;
-  --line: #e7e4dc;
-  --shadow: 0 12px 35px #2038320d;
+  --ink: #1a1a1a;
+  --muted: #555;
+  --paper: #fff;
+  --white: #fff;
+  --green: #8b0000;
+  --mint: #f4e8e8;
+  --line: #888;
+  --shadow: 5px 5px 1px rgb(0 0 0 / 16%);
 }
 
 * { box-sizing: border-box; }

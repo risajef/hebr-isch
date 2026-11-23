@@ -1,0 +1,39 @@
+/* Website theme adapter. Keep the learning UI in the app and source brand tokens from retoweber.info. */
+@import url('/assets/theme/risajef-theme.css');
+
+:root {
+  --ink: var(--text-main, #1a1a1a);
+  --muted: var(--text-secondary, #555);
+  --paper: var(--bg-main, #fff);
+  --white: var(--surface-card, #fff);
+  --green: var(--primary, #8b0000);
+  --mint: color-mix(in srgb, var(--primary, #8b0000) 8%, var(--bg-main, #fff));
+  --line: var(--border-color, #888);
+  --shadow: var(--shadow-md, 5px 5px 1px rgb(0 0 0 / 16%));
+}
+
+body { font-family: var(--font-sans, Inter, Arial, sans-serif); }
+.brand-mark { border-radius: var(--radius-sm, 2px); }
+.brand h1, .welcome h2, .stat-value, .alphabet-title h2 { font-family: var(--font-heading, Inter, Arial, sans-serif); }
+.brand h1, .welcome h2, .alphabet-title h2 { color: var(--primary, #8b0000); }
+.streak, .date-pill, .stat, .letter, .practice-card, .filter, .empty {
+  border-radius: var(--radius-md, 2px);
+  border-color: var(--line);
+  box-shadow: none;
+}
+.side-note { border-radius: var(--radius-md, 2px); background: var(--bg-secondary, #f7f7f7); color: var(--muted); }
+.side-note strong { color: var(--text-main, #1a1a1a); }
+.nav:hover, .nav.active { border-radius: var(--radius-sm, 2px); background: var(--mint); color: var(--primary, #8b0000); }
+.continue { border-radius: var(--radius-lg, 2px); background: var(--primary, #8b0000); box-shadow: var(--shadow-md, 5px 5px 1px rgb(0 0 0 / 16%)); }
+.continue button, .next { border-radius: var(--radius-sm, 2px); }
+.section-head button, .eyebrow { color: var(--primary, #8b0000); }
+.letter:hover { border-color: var(--primary, #8b0000); box-shadow: var(--shadow-sm, 0 1px 3px rgb(0 0 0 / 8%)); }
+.answer, .answer.correct, .answer.wrong { border-radius: var(--radius-sm, 2px); }
+.answer:hover { border-color: var(--primary, #8b0000); color: var(--primary, #8b0000); }
+.next { border: 1px solid var(--primary, #8b0000); background: var(--primary, #8b0000); color: var(--text-on-primary, #fff); }
+.continue button { color: var(--text-main, #1a1a1a); }
+
+button:focus-visible, select:focus-visible {
+  outline: 2px solid var(--primary, #8b0000);
+  outline-offset: 3px;
+}
